@@ -35,4 +35,4 @@ You need to sniff your token from the app, this integration sends a simple REST 
 ## Notes
 - Palgate's API does not report the position of the gate
 
-- This fork was made to preserve this code for anyone that's still using it since the original creator ([sindrebroch](https://github.com/sindrebroch)) kept randomly making his repo private
+- This fork was made to preserve this code for anyone that's still using it since the original creator ([sindrebroch](https://github.com/sindrebroch)) kept randomly making [his repo](https://github.com/sindrebroch/ha-palgate) private
