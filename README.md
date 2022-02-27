@@ -6,7 +6,7 @@
 Unofficial integration, use at your own risk!
 
 ## Requirements
-You need to sniff your token from the app, this integration sends a simple REST command to open a gate using its ID with your token in the header.
+You'll need to [sniff your token](https://github.com/RoeiOfri/homebridge-palgate-opener) from the app, this integration sends a simple REST command to open a gate using its ID with your token in the header
 
 ## Installation
 
