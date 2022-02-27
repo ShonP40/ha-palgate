@@ -3,9 +3,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/ShonP40/ha-palgate?style=flat-square)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
-Palgate Home Assistant integration
-
-Unofficial integration, use at your own risk
+Unofficial integration, use at your own risk!
 
 ## Requirements
 You need to sniff your token from the app, this integration sends a simple REST command to open a gate using its ID with your token in the header.
@@ -34,5 +32,7 @@ You need to sniff your token from the app, this integration sends a simple REST 
 ### Cover
 - Open
 
-## Note
+## Notes
 - Palgate's API does not report the position of the gate
+
+- This fork was made to preserve this code for anyone that's still using it since the original creator ([sindrebroch](https://github.com/sindrebroch)) kept randomly making his repo private
