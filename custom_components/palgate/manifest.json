@@ -2,10 +2,10 @@
   "domain": "palgate",
   "name": "Palgate",
   "config_flow": true,
-  "documentation": "https://www.github.com/sindrebroch/ha-palgate",
-  "issue_tracker": "https://github.com/sindrebroch/ha-palgate/issues",
+  "documentation": "https://github.com/ShonP40/ha-palgate",
+  "issue_tracker": "https://github.com/ShonP40/ha-palgate/issues",
   "requirements": [],
-  "codeowners": ["@sindrebroch"],
+  "codeowners": ["@sindrebroch", "@ShonP40"],
   "iot_class": "cloud_polling",
-  "version": "1.0.0"
+  "version": "1.1.0"
 }
