@@ -9,10 +9,10 @@ from .const import DOMAIN as PALGATE_DOMAIN, PLATFORMS
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Pollenvarsel from a config entry."""
+    """Set up Palgate from a config entry."""
 
 
-    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+    hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
 

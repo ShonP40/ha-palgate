@@ -2,6 +2,6 @@
     "name": "Palgate",
     "hacs": "1.6.0",
     "domains": ["cover"],
-    "homeassistant": "2021.6.0",
+    "homeassistant": "2022.8.0",
     "render_readme": true
 }
