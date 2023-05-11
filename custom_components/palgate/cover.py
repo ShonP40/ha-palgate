@@ -32,7 +32,7 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Add TelenorDrift entities from a config_entry."""
+    """Add Palgate entities from a config_entry."""
 
     api = PalgateApiClient(
         device_id=entry.data[CONF_DEVICE_ID],

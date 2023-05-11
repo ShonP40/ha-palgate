@@ -20,7 +20,7 @@ SCHEMA = vol.Schema(
 )
 
 class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
-    """Config flow for Pollenvarsel."""
+    """Config flow for Palgate."""
 
     VERSION = 1
 
