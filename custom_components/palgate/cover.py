@@ -3,8 +3,8 @@
 from typing import Any, Optional
 
 from homeassistant.components.cover import (
-    CoverEntity, 
-    CoverEntityDescription, 
+    CoverEntity,
+    CoverEntityDescription,
     CoverDeviceClass,
 )
 
@@ -18,21 +18,21 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .api import PalgateApiClient
 from .const import DOMAIN as PALGATE_DOMAIN
 
-COVERS: tuple[CoverEntityDescription, ...] = (
-    CoverEntityDescription(
-        key="garage",
-        name="Garage",
-        icon="mdi:garage",
-        device_class=CoverDeviceClass.GARAGE,
-    ),
-)
-
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add Palgate entities from a config_entry."""
+
+    COVERS: tuple[CoverEntityDescription, ...] = (
+        CoverEntityDescription(
+            key=entry.data[CONF_DEVICE_ID],
+            name=entry.data[CONF_DEVICE_ID],
+            icon="mdi:boom-gate-outline",
+            device_class=CoverDeviceClass.GARAGE,
+        ),
+    )
 
     api = PalgateApiClient(
         device_id=entry.data[CONF_DEVICE_ID],

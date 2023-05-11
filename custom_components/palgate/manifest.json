@@ -7,5 +7,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/ShonP40/ha-palgate/issues",
   "requirements": [],
-  "version": "1.1.2"
+  "version": "1.1.3"
 }
