@@ -10,12 +10,13 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_DEVICE_ID, CONF_TOKEN
 from homeassistant.data_entry_flow import FlowResult
 
-from .const import DOMAIN as PALGATE_DOMAIN
+from .const import DOMAIN as PALGATE_DOMAIN, CONF_PHONE_NUMBER
 
 SCHEMA = vol.Schema(
     {
         vol.Required(CONF_DEVICE_ID): str,
         vol.Required(CONF_TOKEN): str,
+        vol.Required(CONF_PHONE_NUMBER): str,
     }
 )
 

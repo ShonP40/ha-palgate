@@ -16,7 +16,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .api import PalgateApiClient
-from .const import DOMAIN as PALGATE_DOMAIN
+from .const import DOMAIN as PALGATE_DOMAIN, CONF_PHONE_NUMBER
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -37,6 +37,7 @@ async def async_setup_entry(
     api = PalgateApiClient(
         device_id=entry.data[CONF_DEVICE_ID],
         token=entry.data[CONF_TOKEN],
+        phone_number=entry.data[CONF_PHONE_NUMBER],
         session=async_get_clientsession(hass),
     )
         
