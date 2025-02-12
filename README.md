@@ -5,11 +5,25 @@
 
 Unofficial integration, use at your own risk!
 
-This integration makes use of [the amazing work](https://github.com/DonutByte/pylgate) of [@DonutByte](https://github.com/DonutByte) for generating time-sensitive tokens for Palgate.
+## Extracting the token
+You will need to run the following commands to extract your Palgate session token:
 
-## Requirements
-You will need to [obtain a session token](https://github.com/DonutByte/pylgate/blob/main/examples/generate_linked_device_session_token.py). This is done once, using the Palgate app, via "Link Devices".
-Note that "sniffing a token", that was possible in the past, does not work anymore due to changes in the Palgate software. Similarly, the current mechanism may or may not work in the future, depending on Palgate's API. As mentioned, use at your own risk.
+```shell
+# Make sure that you have Python 3 installed before running these
+
+# Install the Python implementation of Palgate's API
+pip3 install git+https://github.com/DonutByte/pylgate.git@main
+
+# Install some additional required packages
+pip3 install qrcode requests
+
+# Download the token generator script
+wget https://raw.githubusercontent.com/DonutByte/pylgate/refs/heads/main/examples/generate_linked_device_session_token.py
+
+# Run the token generator script & follow the instructions
+python3 generate_linked_device_session_token.py
+```
+
 ## Installation
 
 ### HACS (Recommended)
@@ -29,10 +43,9 @@ Note that "sniffing a token", that was possible in the past, does not work anymo
 
 ## Configuration
 
-You need to configure 3 items:
-1. Device ID - This is your physical Palgate device ID, can be obtained from the Palgate app ("settings" of the specific gate)
-2. Phone Number - This is the phone number recognized by Palgate. e.g.: 972505555555
-3. Token - The session token obtained as explained above, via Link Device.
+1. Device ID - This is your physical Palgate device ID, can be obtained from the settings page of each gate in the Palgate app
+2. Phone Number - This is the phone number registered on Palgate (e.g.: `972505555555`)
+3. Token - The session token obtained as explained above, via the `Link Device` button in the Palgate app
 
 ## Todo
 - [ ] Add ability to customize open and close timeouts
@@ -44,4 +57,7 @@ You need to configure 3 items:
 ## Notes
 - Palgate's API does not report the position of the gate
 
-- This fork was made to preserve this code for anyone that's still using it since the original creator ([sindrebroch](https://github.com/sindrebroch)) kept randomly making [his repo](https://github.com/sindrebroch/ha-palgate) private
+## Credits
+- [sindrebroch](https://github.com/sindrebroch) - Original creator
+- [DonutByte](https://github.com/DonutByte) - [Python implementation with an updated time-sensitive token generator](https://github.com/DonutByte/pylgate)
+- [doron1](https://github.com/doron1) - [Implemented support for time-sensitive tokens](https://github.com/ShonP40/ha-palgate/pull/4)
