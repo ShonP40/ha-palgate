@@ -5,9 +5,11 @@
 
 Unofficial integration, use at your own risk!
 
-## Requirements
-You'll need to [sniff your token](https://github.com/RoeiOfri/homebridge-palgate-opener) from the app, this integration sends a simple REST command to open a gate using its ID with your token in the header
+This integration makes use of [the amazing work](https://github.com/DonutByte/pylgate) of [@DonutByte](https://github.com/DonutByte) for generating time-sensitive tokens for Palgate.
 
+## Requirements
+You will need to [obtain a session token](https://github.com/DonutByte/pylgate/blob/main/examples/generate_linked_device_session_token.py). This is done once, using the Palgate app, via "Link Devices".
+Note that "sniffing a token", that was possible in the past, does not work anymore due to changes in the Palgate software. Similarly, the current mechanism may or may not work in the future, depending on Palgate's API. As mentioned, use at your own risk.
 ## Installation
 
 ### HACS (Recommended)
@@ -24,6 +26,13 @@ You'll need to [sniff your token](https://github.com/RoeiOfri/homebridge-palgate
 2. Unpack the release and copy the `custom_components/ha-palgate` directory into the `custom_components` directory of your Home Assistant installation
 3. Restart Home Assistant
 4. Configure the `Palgate` integration
+
+## Configuration
+
+You need to configure 3 items:
+1. Device ID - This is your physical Palgate device ID, can be obtained from the Palgate app ("settings" of the specific gate)
+2. Phone Number - This is the phone number recognized by Palgate. e.g.: 972505555555
+3. Token - The session token obtained as explained above, via Link Device.
 
 ## Todo
 - [ ] Add ability to customize open and close timeouts

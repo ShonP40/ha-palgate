@@ -12,7 +12,8 @@
             "user": {
                 "data": {
                     "device_id": "Device ID",
-                    "token": "Token"
+                    "token": "Token",
+                    "phone_number": "Phone Number"
                 }
             }
         }

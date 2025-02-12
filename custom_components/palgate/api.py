@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 import aiohttp
 from voluptuous.error import Error
 
+from .pylgate.token_generator import generate_token
+
 from .const import (
     SECONDS_OPEN,
     SECONDS_TO_OPEN,
@@ -22,6 +24,7 @@ class PalgateApiClient:
         self,
         device_id: str,
         token: str,
+        phone_number: str,
         session: Optional[aiohttp.client.ClientSession] = None,
     ) -> None:
         """Initialize connection with Palgate."""
@@ -29,6 +32,7 @@ class PalgateApiClient:
         self._session = session
         self.device_id: str = device_id
         self.token: str = token
+        self.phone_number: str = phone_number
 
         self.next_open: datetime = datetime.now()
         self.next_closing: datetime = datetime.now()
@@ -40,6 +44,7 @@ class PalgateApiClient:
     def headers(self) -> dict:
         """Get headers"""
 
+        temporal_token = generate_token(bytes.fromhex(self.token),int(self.phone_number),1)
         return {
             "Accept": "*/*",
             "Accept-Encoding": "gzip, deflate, br",
@@ -47,7 +52,7 @@ class PalgateApiClient:
             "Connection": "keep-alive",
             "Content-Type": "application/json",
             "User-Agent": "BlueGate/115 CFNetwork/1128.0.1 Darwin/19.6.0",
-            "x-bt-user-token": f"{self.token}",
+            "x-bt-token": f"{temporal_token}",
         }
 
     def is_opening(self) -> bool:
