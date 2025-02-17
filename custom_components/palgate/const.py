@@ -8,6 +8,7 @@ DOMAIN = "palgate"
 PLATFORMS = ["cover"]
 
 CONF_PHONE_NUMBER = "phone_number"
+CONF_TOKEN_TYPE = "token_type"
 
 SECONDS_TO_OPEN = 25
 SECONDS_OPEN = 45

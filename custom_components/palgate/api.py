@@ -24,6 +24,7 @@ class PalgateApiClient:
         self,
         device_id: str,
         token: str,
+        token_type: str,
         phone_number: str,
         session: Optional[aiohttp.client.ClientSession] = None,
     ) -> None:
@@ -32,6 +33,7 @@ class PalgateApiClient:
         self._session = session
         self.device_id: str = device_id
         self.token: str = token
+        self.token_type: str = token_type
         self.phone_number: str = phone_number
 
         self.next_open: datetime = datetime.now()
@@ -44,7 +46,7 @@ class PalgateApiClient:
     def headers(self) -> dict:
         """Get headers"""
 
-        temporal_token = generate_token(bytes.fromhex(self.token),int(self.phone_number),1)
+        temporal_token = generate_token(bytes.fromhex(self.token),int(self.phone_number),int(self.token_type))
         return {
             "Accept": "*/*",
             "Accept-Encoding": "gzip, deflate, br",
