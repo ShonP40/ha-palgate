@@ -34,7 +34,7 @@ python3 generate_linked_device_session_token.py
 4. Restart Home Assistant
 5. Configure the `Palgate` integration
 
-### MANUAL INSTALLATION
+### Manual
 
 1. Download the `Source code (zip)` file from the [latest release](https://github.com/ShonP40/ha-palgate/releases/latest)
 2. Unpack the release and copy the `custom_components/ha-palgate` directory into the `custom_components` directory of your Home Assistant installation
@@ -46,7 +46,7 @@ python3 generate_linked_device_session_token.py
 1. Device ID - This is your physical Palgate device ID, can be obtained from the settings page of each gate in the Palgate app
 2. Phone Number - This is the phone number registered on Palgate (e.g.: `972505555555`)
 3. Token - The session token obtained as explained above, via the `Link Device` button in the Palgate app
-4. Linked Device number - 1 or 2, depending on whether this is the first or second Linked Device on your Palgate app. Note that the previous step (generating the token) will show, in addition to the token, the required number (1 or 2)
+4. Linked Device Number - This should either be `1` or `2`, depending on whether you have another device linked (other than HA) to your Palgate account
 
 ## Todo
 - [ ] Add ability to customize open and close timeouts
