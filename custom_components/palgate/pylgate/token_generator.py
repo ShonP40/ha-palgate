@@ -20,7 +20,6 @@ import time
 from ._constants import (
     BLOCK_SIZE,
     T_C_KEY,
-    PHONE_NUMBER_DIGIT_LENGTH,
     TOKEN_SIZE,
     TIMESTAMP_OFFSET,
 )
@@ -58,9 +57,6 @@ def generate_token(session_token: bytes,
     if len(session_token) != BLOCK_SIZE:
         raise ValueError('Invalid session token')
 
-    if len(str(phone_number)) != PHONE_NUMBER_DIGIT_LENGTH:
-        raise ValueError(f'phone number is not {PHONE_NUMBER_DIGIT_LENGTH} digits')
-
     if timestamp_ms is None:
         timestamp_ms = int(time.time())
 
@@ -69,7 +65,9 @@ def generate_token(session_token: bytes,
     step_2_result = _step_2(step_2_key, timestamp_ms, timestamp_offset)
 
     result = bytearray(TOKEN_SIZE)
-    if token_type == TokenType.PRIMARY:
+    if token_type == TokenType.SMS:
+        result[0] = 0x01
+    elif token_type == TokenType.PRIMARY:
         result[0] = 0x11
     elif token_type == TokenType.SECONDARY:
         result[0] = 0x21

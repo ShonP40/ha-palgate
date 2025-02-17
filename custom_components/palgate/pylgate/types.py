@@ -18,5 +18,6 @@ from enum import IntEnum
 
 
 class TokenType(IntEnum):
-    PRIMARY = 1       # Token logged in via SMS
-    SECONDARY = 2     # Token logged in via QR code
+    SMS = 0
+    PRIMARY = 1     # Linked Device - first
+    SECONDARY = 2   # Linked Device - second
