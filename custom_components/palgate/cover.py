@@ -40,6 +40,10 @@ async def async_setup_entry(
         token=entry.data[CONF_TOKEN],
         token_type=entry.data[CONF_TOKEN_TYPE],
         phone_number=entry.data[CONF_PHONE_NUMBER],
+        seconds_to_open=entry.data[CONF_ADVANCED][CONF_SECONDS_TO_OPEN],
+        seconds_open=entry.data[CONF_ADVANCED][CONF_SECONDS_OPEN],
+        seconds_to_close=entry.data[CONF_ADVANCED][CONF_SECONDS_TO_CLOSE],
+        allow_invert_as_stop=entry.data[CONF_ADVANCED][CONF_ALLOW_INVERT_AS_STOP],
         session=async_get_clientsession(hass),
     )
         
@@ -88,3 +92,8 @@ class PalgateCover(CoverEntity):
         """Open the cover."""
 
         await self.api.open_gate()
+
+    async def async_stop_cover(self, **kwargs: Any) -> None:
+        """Stop the cover - only if allowed in config (usually auto-close)"""
+
+        await self.api.invert_gate()

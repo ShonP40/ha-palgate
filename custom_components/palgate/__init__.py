@@ -5,7 +5,8 @@ from __future__ import annotations
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN as PALGATE_DOMAIN, PLATFORMS, CONF_TOKEN_TYPE
+from .const import DOMAIN as PALGATE_DOMAIN
+from .const import *
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -35,7 +36,7 @@ async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 
-    if config_entry.version > 2:
+    if config_entry.version > 3:
         return False
 
     new_data = dict(config_entry.data)
@@ -44,6 +45,15 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 
         new_data[CONF_TOKEN_TYPE] = "1"
 
-    hass.config_entries.async_update_entry(config_entry, data=new_data, version=2)
+    if config_entry.version < 3:
+
+        new_data[CONF_ADVANCED] = {
+            CONF_SECONDS_TO_OPEN : SECONDS_TO_OPEN,
+            CONF_SECONDS_OPEN : SECONDS_OPEN,
+            CONF_SECONDS_TO_CLOSE : SECONDS_TO_CLOSE,
+            CONF_ALLOW_INVERT_AS_STOP : False
+        }
+
+    hass.config_entries.async_update_entry(config_entry, data=new_data, version=3)
 
     return True
