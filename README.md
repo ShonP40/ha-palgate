@@ -6,22 +6,10 @@
 Unofficial integration, use at your own risk!
 
 ## Extracting the token
-You will need to run the following commands to extract your Palgate session token:
+You will need to run the following command on your Home Assistant server using SSH/the terminal addon to extract your Palgate session token:
 
 ```shell
-# Make sure that you have Python 3 installed before running these
-
-# Install the Python implementation of Palgate's API
-pip3 install git+https://github.com/DonutByte/pylgate.git@main
-
-# Install some additional required packages
-pip3 install qrcode requests
-
-# Download the token generator script
-wget https://raw.githubusercontent.com/DonutByte/pylgate/refs/heads/main/examples/generate_linked_device_session_token.py
-
-# Run the token generator script & follow the instructions
-python3 generate_linked_device_session_token.py
+/config/custom_components/palgate/generate_linked_device_token.sh
 ```
 
 ## Installation
