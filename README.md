@@ -36,12 +36,10 @@ You will need to run the following command on your Home Assistant server using S
 3. Token - The session token obtained as explained above, via the `Link Device` button in the Palgate app
 4. Linked Device Number - This should either be `1` or `2`, depending on whether you have another device linked (other than HA) to your Palgate account
 
-## Todo
-- [ ] Add ability to customize open and close timeouts
-
 ## Features
 ### Cover
 - Open
+- Custom open/close timouts
 
 ## Notes
 - Palgate's API does not report the position of the gate
