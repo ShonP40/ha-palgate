@@ -23,7 +23,7 @@
                     "time_to_close": "Time (sec) gate takes to close",
                     "allow_invert_as_stop": "Allow triggering gate while opening, to invert direction"
                 },
-                "data_descrtiption": {
+                "data_description": {
                     "allow_invert_as_stop": "If selected, STOP will trigger the gate again during open"
                 }
             }
