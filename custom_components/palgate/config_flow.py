@@ -8,10 +8,11 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.const import CONF_DEVICE_ID, CONF_TOKEN
-from homeassistant.data_entry_flow import FlowResult
+from homeassistant.data_entry_flow import FlowResult, section
 from homeassistant.helpers.selector import selector
 
-from .const import DOMAIN as PALGATE_DOMAIN, CONF_PHONE_NUMBER, CONF_TOKEN_TYPE
+from .const import DOMAIN as PALGATE_DOMAIN
+from .const import *
 
 SCHEMA = vol.Schema(
     {
@@ -23,14 +24,25 @@ SCHEMA = vol.Schema(
                 "mode": "dropdown",
                 "options": ["0","1", "2"],
             }
-        })
+        }),
+        vol.Required("advanced_options"): section(
+            vol.Schema(
+                {
+                    vol.Required(CONF_SECONDS_TO_OPEN, default=SECONDS_TO_OPEN): int,
+                    vol.Required(CONF_SECONDS_OPEN, default=SECONDS_OPEN): int,
+                    vol.Required(CONF_SECONDS_TO_CLOSE, default=SECONDS_TO_CLOSE): int,
+                    vol.Required(CONF_ALLOW_INVERT_AS_STOP, default=False): bool,
+                }
+            ),
+            {"collapsed": True}
+        )
     }
 )
 
 class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
     """Config flow for Palgate."""
 
-    VERSION = 2
+    VERSION = 3
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None

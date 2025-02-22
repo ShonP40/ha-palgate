@@ -11,12 +11,6 @@ from voluptuous.error import Error
 
 from .pylgate.token_generator import generate_token
 
-from .const import (
-    SECONDS_OPEN,
-    SECONDS_TO_OPEN,
-    SECONDS_TO_CLOSE,
-)
-
 class PalgateApiClient:
     """Main class for handling connection with."""
 
@@ -26,6 +20,10 @@ class PalgateApiClient:
         token: str,
         token_type: str,
         phone_number: str,
+        seconds_to_open: int,
+        seconds_open: int,
+        seconds_to_close: int,
+        allow_invert_as_stop: bool,
         session: Optional[aiohttp.client.ClientSession] = None,
     ) -> None:
         """Initialize connection with Palgate."""
@@ -35,7 +33,10 @@ class PalgateApiClient:
         self.token: str = token
         self.token_type: str = token_type
         self.phone_number: str = phone_number
-
+        self.seconds_to_open: int = seconds_to_open
+        self.seconds_open: int = seconds_open
+        self.seconds_to_close: int = seconds_to_close
+        self.allow_invert_as_stop: bool = allow_invert_as_stop
         self.next_open: datetime = datetime.now()
         self.next_closing: datetime = datetime.now()
         self.next_closed: datetime = datetime.now()
@@ -83,8 +84,24 @@ class PalgateApiClient:
                 error_text = json.loads(await resp.text())
                 raise Error(f"Not OK {resp.status} {error_text}")
 
-            self.next_open = datetime.now() + timedelta(seconds=SECONDS_TO_OPEN)
-            self.next_closing = datetime.now() + timedelta(seconds=(SECONDS_TO_OPEN + SECONDS_OPEN))
-            self.next_closed = datetime.now() + timedelta(seconds=(SECONDS_TO_OPEN + SECONDS_OPEN + SECONDS_TO_CLOSE))
+            self.next_open = datetime.now() + timedelta(seconds=self.seconds_to_open)
+            self.next_closing = datetime.now() + timedelta(seconds=(self.seconds_to_open + self.seconds_open))
+            self.next_closed = datetime.now() + timedelta(seconds=(self.seconds_to_open + self.seconds_open + self.seconds_to_close))
 
             return await resp.json()
+    async def invert_gate(self) -> Any:
+        """Trigger the Palgate device again during open"""
+
+        if (self.allow_invert_as_stop and self.is_opening()):
+
+            async with self._session.get(url=self.url(), headers=self.headers()) as resp:
+                if resp.status == HTTPStatus.UNAUTHORIZED:
+                    raise Error(f"Unauthorized. {resp.status}")
+                if resp.status != HTTPStatus.OK:
+                    error_text = json.loads(await resp.text())
+                    raise Error(f"Not OK {resp.status} {error_text}")
+
+                self.next_closing = datetime.now()
+                self.next_closed = datetime.now() + timedelta(seconds=(self.seconds_to_close))  # Best guess
+
+                return await resp.json()
