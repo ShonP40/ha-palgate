@@ -18,9 +18,9 @@
                 "name": "Advanced Options",
                 "description": "If you are unsure, leave at default values",
                 "data": {
-                    "time_to_open": "Time (sec) gate takes to open",
-                    "time_open": "Time (sec) gate remains open",
-                    "time_to_close": "Time (sec) gate takes to close",
+                    "seconds_to_open": "Time (sec) gate takes to open",
+                    "seconds_open": "Time (sec) gate remains open",
+                    "seconds_to_close": "Time (sec) gate takes to close",
                     "allow_invert_as_stop": "Allow triggering gate while opening, to invert direction"
                 },
                 "data_description": {
