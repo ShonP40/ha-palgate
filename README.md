@@ -9,7 +9,7 @@ Unofficial integration, use at your own risk!
 You will need to run the following command on your Home Assistant server using SSH/the terminal addon to extract your Palgate session token:
 
 ```shell
-/config/custom_components/palgate/generate_linked_device_token.sh
+/config/custom_components/palgate/generate_linked_device_session_token.sh
 ```
 
 ## Installation
