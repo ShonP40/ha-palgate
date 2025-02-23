@@ -6,5 +6,5 @@
   "documentation": "https://github.com/ShonP40/ha-palgate",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/ShonP40/ha-palgate/issues",
-  "version": "1.2.2"
+  "version": "1.2.3"
 }
