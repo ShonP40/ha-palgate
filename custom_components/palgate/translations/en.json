@@ -1,15 +1,45 @@
 {
     "config": {
         "abort": {
-            "already_configured": "Device is already configured"
+            "already_configured": "Device is already configured",
+            "reconfigure_successful": "Gate entry reconfigured succefully"
         },
         "error": {
             "cannot_connect": "Failed to connect",
             "invalid_auth": "Invalid authentication",
-            "unknown": "Unexpected error"
+            "unknown": "Unexpected error",
+            "cant_reconfigure_device_id": "Device ID cannot be reconfigured. Update rejected"
         },
         "step": {
             "user": {
+                "data": {
+                    "device_id": "Device ID",
+                    "token": "Token",
+                    "phone_number": "Phone Number",
+                    "token_type": "Linked Device Number"
+                },
+                "data_description": {
+                    "phone_number": "Phone number registered with Palgate",
+                    "token": "Token generated using Link Devices (see integration documentation)",
+                    "token_type": "1 or 2 for the first or second Linked Device on the Palgate app. 0 is for SMS-derived links"
+                },
+                "sections": {
+                    "advanced_options": {
+                        "name": "Advanced Options",
+                        "description": "If you are unsure, leave at default values",
+                        "data": {
+                            "seconds_to_open": "Time (sec) gate takes to open",
+                            "seconds_open": "Time (sec) gate remains open",
+                            "seconds_to_close": "Time (sec) gate takes to close",
+                            "allow_invert_as_stop": "Allow triggering gate while opening, to invert direction"
+                        },
+                        "data_description": {
+                            "allow_invert_as_stop": "If selected, STOP will trigger the gate again during open"
+                        }
+                    }
+                }
+            },
+            "reconfigure": {
                 "data": {
                     "device_id": "Device ID",
                     "token": "Token",
