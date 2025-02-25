@@ -14,31 +14,6 @@ from homeassistant.helpers.selector import selector
 from .const import DOMAIN as PALGATE_DOMAIN
 from .const import *
 
-SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_DEVICE_ID): str,
-        vol.Required(CONF_TOKEN): str,
-        vol.Required(CONF_PHONE_NUMBER): str,
-        vol.Required(CONF_TOKEN_TYPE, default="1"): selector({
-            "select": {
-                "mode": "dropdown",
-                "options": ["0","1", "2"],
-            }
-        }),
-        vol.Required("advanced_options"): section(
-            vol.Schema(
-                {
-                    vol.Required(CONF_SECONDS_TO_OPEN, default=SECONDS_TO_OPEN): int,
-                    vol.Required(CONF_SECONDS_OPEN, default=SECONDS_OPEN): int,
-                    vol.Required(CONF_SECONDS_TO_CLOSE, default=SECONDS_TO_CLOSE): int,
-                    vol.Required(CONF_ALLOW_INVERT_AS_STOP, default=False): bool,
-                }
-            ),
-            {"collapsed": True}
-        )
-    }
-)
-
 class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
     """Config flow for Palgate."""
 
@@ -66,7 +41,34 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
 
         return self.async_show_form(
             step_id="user",
-            data_schema=SCHEMA,
+            data_schema=self._create_schema(),
+            errors={},
+        )
+
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle a flow initialized by the user."""
+
+        if user_input is not None:
+
+            if user_input[CONF_DEVICE_ID] != self.device_id:
+                return self.async_show_form(
+                    step_id="reconfigure",
+                    data_schema=self._create_schema(),
+                    errors={"base":"cant_reconfigure_device_id"},
+                )
+
+            return self.async_update_reload_and_abort(
+                self._get_reconfigure_entry(),
+                data_updates=user_input,
+            )
+        self.entry = self._get_reconfigure_entry()
+        self.device_id = self.entry.data[CONF_DEVICE_ID]
+
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=self._create_schema(),
             errors={},
         )
 
@@ -79,3 +81,55 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
         ]
 
         return area in existing_devices
+
+    def _create_schema(self) -> vol.Schema:
+
+        def_device_id  = self.entry.data[CONF_DEVICE_ID] \
+            if self.source == config_entries.SOURCE_RECONFIGURE \
+            else None
+        def_token      = self.entry.data[CONF_TOKEN] \
+            if self.source == config_entries.SOURCE_RECONFIGURE \
+            else None
+        def_phone      = self.entry.data[CONF_PHONE_NUMBER] \
+            if self.source == config_entries.SOURCE_RECONFIGURE \
+            else None
+        def_token_type = self.entry.data[CONF_TOKEN_TYPE] \
+            if self.source == config_entries.SOURCE_RECONFIGURE \
+            else "1"
+        def_sec_to_open  = self.entry.data[CONF_ADVANCED][CONF_SECONDS_TO_OPEN] \
+            if self.source == config_entries.SOURCE_RECONFIGURE \
+            else SECONDS_TO_OPEN
+        def_sec_open     = self.entry.data[CONF_ADVANCED][CONF_SECONDS_OPEN] \
+            if self.source == config_entries.SOURCE_RECONFIGURE \
+            else SECONDS_OPEN
+        def_sec_to_close = self.entry.data[CONF_ADVANCED][CONF_SECONDS_TO_CLOSE] \
+            if self.source == config_entries.SOURCE_RECONFIGURE \
+            else SECONDS_TO_CLOSE
+        def_allow_invert = self.entry.data[CONF_ADVANCED][CONF_ALLOW_INVERT_AS_STOP] \
+            if self.source == config_entries.SOURCE_RECONFIGURE \
+            else False
+
+        return vol.Schema(
+        {
+            vol.Required(CONF_DEVICE_ID, default=def_device_id): str,
+            vol.Required(CONF_TOKEN, default=def_token): str,
+            vol.Required(CONF_PHONE_NUMBER, default=def_phone): str,
+            vol.Required(CONF_TOKEN_TYPE, default=def_token_type): selector({
+                "select": {
+                    "mode": "dropdown",
+                    "options": ["0","1", "2"],
+                }
+            }),
+            vol.Required(CONF_ADVANCED): section(
+                vol.Schema(
+                    {
+                        vol.Required(CONF_SECONDS_TO_OPEN, default=def_sec_to_open): int,
+                        vol.Required(CONF_SECONDS_OPEN, default=def_sec_open): int,
+                        vol.Required(CONF_SECONDS_TO_CLOSE, default=def_sec_to_close): int,
+                        vol.Required(CONF_ALLOW_INVERT_AS_STOP, default=def_allow_invert): bool,
+                    }
+                ),
+                {"collapsed": True}
+            )
+        }
+        )
