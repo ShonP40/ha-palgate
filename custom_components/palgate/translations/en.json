@@ -14,14 +14,10 @@
             "user": {
                 "data": {
                     "device_id": "Device ID",
-                    "token": "Token",
-                    "phone_number": "Phone Number",
-                    "token_type": "Linked Device Number"
+                    "phone_number": "Linked Phone Number"
                 },
                 "data_description": {
-                    "phone_number": "Phone number registered with Palgate",
-                    "token": "Token generated using Link Devices (see integration documentation)",
-                    "token_type": "1 or 2 for the first or second Linked Device on the Palgate app. 0 is for SMS-derived links"
+                    "phone_number": "Phone number registered with Palgate"
                 },
                 "sections": {
                     "advanced_options": {
@@ -42,14 +38,10 @@
             "reconfigure": {
                 "data": {
                     "device_id": "Device ID",
-                    "token": "Token",
-                    "phone_number": "Phone Number",
-                    "token_type": "Linked Device Number"
+                    "phone_number": "Linked Phone Number"
                 },
                 "data_description": {
-                    "phone_number": "Phone number registered with Palgate",
-                    "token": "Token generated using Link Devices (see integration documentation)",
-                    "token_type": "1 or 2 for the first or second Linked Device on the Palgate app. 0 is for SMS-derived links"
+                    "phone_number": "Phone number registered with Palgate"
                 },
                 "sections": {
                     "advanced_options": {
@@ -67,6 +59,9 @@
                     }
                 }
             }
+        },
+        "progress": {
+            "wait_for_qr": "Please open the Palgate app on your mobile phone, select LINKED DEVICES and then LINK A DEVICE, then scan this QR code. \n\nWaiting...\n\n\n {qr_code}"
         }
     }
 }

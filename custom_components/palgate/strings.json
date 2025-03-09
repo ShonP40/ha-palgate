@@ -4,9 +4,7 @@
       "user": {
         "data": {
           "device_id": "Device ID",
-          "phone_number": "Phone Number",
-          "token": "Token",
-          "token_type": "Linked Device Number"
+          "phone_number": "Linked Phone Number"
         },
         "data_description": {
           "phone_number": "Phone number registered with Palgate",
@@ -33,10 +31,15 @@
     "error": {
       "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
       "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
-      "unknown": "[%key:common::config_flow::error::unknown%]"
+      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "cant_reconfigure_device_id": "Device ID cannot be reconfigured. Update rejected"
     },
     "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "reconfigure_successful": "Gate entry reconfigured succefully"
+    },
+    "progress": {
+      "wait_for_qr": "Please open the Palgate app on your mobile phone, select LINKED DEVICES and then LINK A DEVICE, then scan this QR code. \n\nWaiting...\n\n\n {qr_code}"
     }
   }
 }
