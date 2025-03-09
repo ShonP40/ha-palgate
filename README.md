@@ -5,17 +5,6 @@
 
 Unofficial integration, use at your own risk!
 
-## Extracting the token
-You will need to run the following commands on your Home Assistant server using the `Advanced SSH & Web Terminal` addon to extract your Palgate session token:
-
-```shell
-# Allow executing the script
-chmod +x /config/custom_components/palgate/generate_linked_device_session_token.sh
-
-# Run the script
-/config/custom_components/palgate/generate_linked_device_session_token.sh
-```
-
 ## Installation
 
 1. Ensure that [HACS](https://hacs.xyz/) is installed
@@ -29,9 +18,7 @@ chmod +x /config/custom_components/palgate/generate_linked_device_session_token.
 ## Configuration
 
 1. `Device ID` - This is your physical Palgate device ID, can be obtained from the settings page of each gate in the Palgate app
-2. `Phone Number` - This is the phone number registered on Palgate (e.g.: `972505555555`)
-3. `Token` - The session token obtained as explained above, via the `Link Device` button in the Palgate app
-4. `Linked Device Number` - This should either be `1` or `2`, depending on whether you have another device linked (other than HA) to your Palgate account
+2. `Linked Phone Number` - After linking at least one device, has the phone number(s) associated with Palgate app instances you already linked
 
 ## Advanced Configuration
 1. `Time (sec) gate takes to open` - The time it takes for the gate to open in seconds
