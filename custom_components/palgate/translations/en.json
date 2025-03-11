@@ -17,7 +17,7 @@
                     "phone_number": "Linked Phone Number"
                 },
                 "data_description": {
-                    "device_id": "Palgate Device ID of gate, can be found in the Palgate app",
+                    "device_id": "Device ID of the gate, can be found in the Palgate app",
                     "phone_number": "Phone number of Palgate Linked Device authorized for gate"
                 },
                 "sections": {
@@ -41,7 +41,7 @@
                     "device_id": "Device ID"
                 },
                 "data_description": {
-                    "device_id": "Palgate Device ID of gate, can be found in the Palgate app"
+                    "device_id": "Device ID of the gate, can be found in the Palgate app"
                 },
                 "sections": {
                     "advanced_options": {
@@ -61,7 +61,7 @@
             }
         },
         "progress": {
-            "wait_for_qr": "Please open the Palgate app on your mobile phone, select LINKED DEVICES and then LINK A DEVICE, then scan this QR code. \n\nWaiting...\n\n\n {qr_code}"
+            "wait_for_qr": "Please open the Palgate app on your phone, select LINK A DEVICE on the LINKED DEVICES page and then scan this QR code. \n\nWaiting...\n\n\n {qr_code}"
         }
     }
 }
