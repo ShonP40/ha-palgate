@@ -18,7 +18,7 @@ Unofficial integration, use at your own risk!
 ## Configuration
 
 1. `Device ID` - This is your physical Palgate device ID, can be obtained from the settings page of each gate in the Palgate app
-2. `Linked Phone Number` - After linking at least one device, has the phone number(s) associated with Palgate app instances you already linked
+2. `Linked Phone Number` - Lists the phone numbers of the Palgate accounts you linked
 
 ## Advanced Configuration
 1. `Time (sec) gate takes to open` - The time it takes for the gate to open in seconds
