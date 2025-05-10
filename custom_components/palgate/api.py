@@ -42,7 +42,17 @@ class PalgateApiClient:
         self.next_closed: datetime = datetime.now()
 
     def url(self) -> str:
-        return f"https://api1.pal-es.com/v1/bt/device/{self.device_id}/open-gate?openBy=100&outputNum=1"
+        """Build the url by extracting the gate number (:1 or :2, etc...) and set it in the outputNum"""
+        device_id = self.device_id
+        output_num = 1  # default
+
+        if ':' in device_id:
+            base_id, output = device_id.rsplit(':', 1)
+            if output.isdigit():
+                device_id = base_id
+                output_num = int(output)
+
+        return f"https://api1.pal-es.com/v1/bt/device/{device_id}/open-gate?openBy=100&outputNum={output_num}"
 
     def headers(self) -> dict:
         """Get headers"""
