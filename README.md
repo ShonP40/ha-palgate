@@ -38,3 +38,4 @@ Unofficial integration, use at your own risk!
 - [sindrebroch](https://github.com/sindrebroch) - Original creator
 - [DonutByte](https://github.com/DonutByte) - [Python implementation with an updated time-sensitive token generator](https://github.com/DonutByte/pylgate)
 - [doron1](https://github.com/doron1) - [Implemented support for time-sensitive tokens](https://github.com/ShonP40/ha-palgate/pull/4)
+- [bondar](https://github.com/bondar) - [Implemented support for devices that control multiple gates](https://github.com/ShonP40/ha-palgate/pull/18)
