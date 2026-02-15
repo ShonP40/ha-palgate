@@ -26,17 +26,19 @@ async def async_setup_entry(
 ) -> None:
     """Add Palgate entities from a config_entry."""
 
+    device_id = entry.data[CONF_DEVICE_ID]
+    
     COVERS: tuple[CoverEntityDescription, ...] = (
         CoverEntityDescription(
-            key=entry.data[CONF_DEVICE_ID],
-            name=entry.data[CONF_DEVICE_ID],
+            key=device_id,
+            name=device_id,
             icon="mdi:boom-gate-outline",
             device_class=CoverDeviceClass.GARAGE,
         ),
     )
 
     api = PalgateApiClient(
-        device_id=entry.data[CONF_DEVICE_ID],
+        device_id=device_id,
         token=entry.data[CONF_TOKEN],
         token_type=entry.data[CONF_TOKEN_TYPE],
         phone_number=entry.data[CONF_PHONE_NUMBER],
@@ -48,7 +50,7 @@ async def async_setup_entry(
     )
         
     async_add_entities(
-        PalgateCover(api, description) for description in COVERS
+        PalgateCover(api, description, device_id) for description in COVERS
     )
 
 
@@ -59,6 +61,7 @@ class PalgateCover(CoverEntity):
         self,
         api: PalgateApiClient,
         description: CoverEntityDescription,
+        device_id: str,
     ) -> None:
         """Initialize."""
 
@@ -67,10 +70,10 @@ class PalgateCover(CoverEntity):
 
         self._attr_unique_id = f"{description.key}"
         self._attr_device_info = DeviceInfo(
-            identifiers={(PALGATE_DOMAIN, "palgate")},
-            name="Palgate",
-            model="Palgate",
+            identifiers={(PALGATE_DOMAIN, device_id)},
+            name=device_id,
             manufacturer="Palgate",
+            model="Gate Controller",
         )
 
     @property
