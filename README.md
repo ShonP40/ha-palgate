@@ -5,6 +5,12 @@
 
 Unofficial integration, use at your own risk!
 
+## Note for Release 1.4.0
+
+As of release 1.4 of this integration, each gate is set up as a separate device, with a single "cover" type control. In previous releases, if you added multiple gates, they were all created as multiple "cover" entities under one device. The new setup allows for better control of multiple gates, e.g. assigning them to different areas.
+
+The entity names for the gates remain the same, so existing automations, scripts or scenes *should* continue functioning as before, but it is advised to double check that everything still works as planned.
+
 ## Installation
 
 1. Ensure that [HACS](https://hacs.xyz/) is installed
@@ -37,5 +43,5 @@ Unofficial integration, use at your own risk!
 ## Credits
 - [sindrebroch](https://github.com/sindrebroch) - Original creator
 - [DonutByte](https://github.com/DonutByte) - [Python implementation with an updated time-sensitive token generator](https://github.com/DonutByte/pylgate)
-- [doron1](https://github.com/doron1) - [Implemented support for time-sensitive tokens](https://github.com/ShonP40/ha-palgate/pull/4)
+- [doron1](https://github.com/doron1) - [Implemented support for time-sensitive tokens](https://github.com/ShonP40/ha-palgate/pull/4), [Add Configurable Options](https://github.com/ShonP40/ha-palgate/pull/8), [Perform Full Device Linking in Config Flow](https://github.com/ShonP40/ha-palgate/pull/17), [One Device Per Gate](https://github.com/ShonP40/ha-palgate/pull/24) and more
 - [bondar](https://github.com/bondar) - [Implemented support for devices that control multiple gates](https://github.com/ShonP40/ha-palgate/pull/18)
