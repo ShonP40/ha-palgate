@@ -8,8 +8,11 @@ from datetime import datetime, timedelta
 
 import aiohttp
 from voluptuous.error import Error
+import logging
 
 from .pylgate.token_generator import generate_token
+
+_LOGGER: logging.Logger = logging.getLogger(__name__)
 
 class PalgateApiClient:
     """Main class for handling connection with."""
@@ -88,6 +91,7 @@ class PalgateApiClient:
         """Open Palgate device."""
 
         async with self._session.get(url=self.url(), headers=self.headers()) as resp:
+            _LOGGER.debug(f"API open request issued. URL: {resp.url}, Headers: {dict(resp.request_info.headers)}")
             if resp.status == HTTPStatus.UNAUTHORIZED:
                 raise Error(f"Unauthorized. {resp.status}")
             if resp.status != HTTPStatus.OK:
@@ -105,6 +109,7 @@ class PalgateApiClient:
         if (self.allow_invert_as_stop and self.is_opening()):
 
             async with self._session.get(url=self.url(), headers=self.headers()) as resp:
+                _LOGGER.debug(f"API invert/open request issued. URL: {resp.url}, Headers: {dict(resp.request_info.headers)}")
                 if resp.status == HTTPStatus.UNAUTHORIZED:
                     raise Error(f"Unauthorized. {resp.status}")
                 if resp.status != HTTPStatus.OK:
