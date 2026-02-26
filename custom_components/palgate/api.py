@@ -91,7 +91,7 @@ class PalgateApiClient:
         """Open Palgate device."""
 
         async with self._session.get(url=self.url(), headers=self.headers()) as resp:
-                        _LOGGER.debug(f"API open request issued. URL: {resp.url}, Headers: {dict(resp.request_info.headers)}")
+            _LOGGER.debug(f"API open request issued. URL: {resp.url}, Headers: {dict(resp.request_info.headers)}")
             if resp.status == HTTPStatus.UNAUTHORIZED:
                 raise Error(f"Unauthorized. {resp.status}")
             if resp.status != HTTPStatus.OK:
