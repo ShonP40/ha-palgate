@@ -177,6 +177,9 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
                 _LOGGER.error(_text)
                 raise HomeAssistantError("Response from vendor not valid JSON")
 
+        _LOGGER.debug(f"Linked Device response received. URL: {resp.url}, Response headers: {dict(resp.headers)}")
+        _LOGGER.debug(f"Response payload: {_response}")
+        
         self._linked_phone_number = _response["user"]["id"]
         self._linked_token = _response["user"]["token"]
         self._linked_token_type = _response["secondary"]
