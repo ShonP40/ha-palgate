@@ -115,7 +115,7 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
         self.user_input[CONF_TOKEN_TYPE] = self._linked_token_type
 
         return self.async_create_entry(
-            title=self.user_input[CONF_DEVICE_ID].title(),
+            title=f"{self.user_input[CONF_DEVICE_ID]} (via {self.user_input[CONF_PHONE_NUMBER]})",
             data=self.user_input,
         )
 
