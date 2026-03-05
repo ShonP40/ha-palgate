@@ -1,11 +1,11 @@
 {
   "domain": "palgate",
   "name": "Palgate",
-  "codeowners": ["@ShonP40"],
+  "codeowners": ["@doron1"],
   "config_flow": true,
-  "documentation": "https://github.com/ShonP40/ha-palgate",
+  "documentation": "https://github.com/doron1/ha-palgate",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/ShonP40/ha-palgate/issues",
+  "issue_tracker": "https://github.com/doron1/ha-palgate/issues",
   "requirements": ["pyqrcode>=1.2.1","pypng"],
   "version": "1.4.1"
 }

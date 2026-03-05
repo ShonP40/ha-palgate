@@ -19,9 +19,9 @@ Pull requests are the best way to propose changes to the codebase.
 4. Test you contribution.
 5. Issue that pull request!
 
-## Any contributions you make will be under the MIT Software License
+## Any contributions you make will be under the Apache 2.0 Software License
 
-In short, when you submit code changes, your submissions are understood to be under the same [Apache License 2.0 License](https://github.com/ShonP40/ha-palgate/blob/master/LICENSE) that covers the project. Feel free to contact the maintainers if that's a concern.
+In short, when you submit code changes, your submissions are understood to be under the same [Apache License 2.0 License](https://github.com/doron1/ha-palgate/blob/master/LICENSE) that covers the project. Feel free to contact the maintainers if that's a concern.
 
 ## Report bugs using Github's [issues](../../issues)
 
@@ -58,4 +58,4 @@ file.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under its MIT License.
+By contributing, you agree that your contributions will be licensed under its Apache License.
