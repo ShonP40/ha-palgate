@@ -27,14 +27,14 @@ As of 5 March 2026, I ([doron1](https://github.com/doron1)) will be taking over 
 
 ## Configuration
 
-1. `Device ID` - This is your physical Palgate device ID, can be obtained from the settings page of each gate in the Palgate app
-2. `Linked Phone Number` - Lists the phone numbers of the Palgate accounts you linked
+1. `Device ID` - This is your physical Palgate device ID. It can be obtained from the settings page of each gate in the Palgate app
+2. `Linked Phone Number` - Phone numbers of Palgate accounts you already linked (empty when configuring the first device)
 
 ## Advanced Configuration
-1. `Time (sec) gate takes to open` - The time it takes for the gate to open in seconds
-2. `Time (sec) gate remains open` - The time the gate remains open in seconds
-3. `Time (sec) gate takes to close` - The time it takes for the gate to close in seconds
-4. `Allow triggering gate while opening, to invert direction` - If enabled, the gate can be triggered while opening to invert the direction
+1. `Time (sec) gate takes to open` - The time it takes for the gate to open, in seconds (default 25)
+2. `Time (sec) gate remains open` - The time the gate remains open, in seconds (default 45)
+3. `Time (sec) gate takes to close` - The time it takes for the gate to close, in seconds (default 35)
+4. `Allow triggering gate while opening, to invert direction` - If enabled, the gate can be triggered while opening, to invert the direction
 
 ## Features
 ### Cover
@@ -43,11 +43,10 @@ As of 5 March 2026, I ([doron1](https://github.com/doron1)) will be taking over 
 - Custom open/close timeouts
 
 ## Notes
-- Palgate's API does not report the position of the gate. Practically, this means that Home Assistant does not have definite knowledge of the gate being closed, or actively moving, or current position. This in turn means that the indications of "opening", "closed" etc. are simulated, primarily based on your configured numbers (see [Advanced Configuration](#advanced-configuration) above).
+- Palgate's API does not report the position of the gate. In practice, this means that Home Assistant does not have definitive knowledge of the gate being closed, being actively moving, or its current position. This in turn means that the indications of "opening", "closed" etc. are in fact simulated, based on your configured timing parameters (see [Advanced Configuration](#advanced-configuration) above).
 
 ## Credits
 - [sindrebroch](https://github.com/sindrebroch) - Original creator
 - [ShonP40](https://github.com/ShonP40) - Devoted owner/maintainer of this integration for many years
 - [DonutByte](https://github.com/DonutByte) - [Python implementation with an updated time-sensitive token generator](https://github.com/DonutByte/pylgate)
-- [doron1](https://github.com/doron1) - [Implemented support for time-sensitive tokens](https://github.com/doron1/ha-palgate/pull/4), [Add Configurable Options](https://github.com/doron1/ha-palgate/pull/8), [Perform Full Device Linking in Config Flow](https://github.com/doron1/ha-palgate/pull/17), [One Device Per Gate](https://github.com/doron1/ha-palgate/pull/24) and more
 - [bondar](https://github.com/bondar) - [Implemented support for devices that control multiple gates](https://github.com/doron1/ha-palgate/pull/18)
