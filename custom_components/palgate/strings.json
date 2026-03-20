@@ -26,6 +26,13 @@
             }
         }
       },
+      "select_device": {
+        "title": "Select gate",
+        "description": "Select gate to configure (linked to phone {phone})",
+        "data": {
+          "device_id": "Gate"
+        }
+      },
       "reconfigure": {
                 "data": {
                     "device_id": "Device ID"
@@ -58,6 +65,8 @@
     },
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "cannot_fetch_devices": "Could not retrieve gate list from server. Please try again.",
+      "no_devices_found": "No more configurable gates for phone {phone}.",
       "reconfigure_successful": "Gate entry reconfigured succefully"
     },
     "progress": {
