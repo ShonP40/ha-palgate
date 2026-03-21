@@ -3,7 +3,14 @@
 ![GitHub Release](https://img.shields.io/github/v/release/doron1/ha-palgate?style=flat-square)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
-Unofficial integration, use at your own risk!
+This is a Home Assistant integration for Palgate gate controllers.
+
+Unofficial integration, use at your own risk.
+
+## Note for Release 1.5.x
+
+Release 1.5 brings a simplified and streamlined configuration process. You no longer need to manually look up and type your gate ID from the Palgate app - it is now fetched automatically. If your Palgate account is authorized for more than one gate, you will be presented with a list to choose from. One gate per configuration entry; configure as many as you need.
+
 
 ## Note for Release 1.4.x
 
@@ -27,8 +34,12 @@ As of 5 March 2026, I ([doron1](https://github.com/doron1)) will be taking over 
 
 ## Configuration
 
-1. `Device ID` - This is your physical Palgate device ID. It can be obtained from the settings page of each gate in the Palgate app
-2. `Linked Phone Number` - Phone numbers of Palgate accounts you already linked (empty when configuring the first device)
+1. ~~`Device ID` - This is your physical Palgate device ID. It can be obtained from the settings page of each gate in the Palgate app~~As of release 1.5.0, this is not needed anymore and is configured automatically for you.
+2. `Linked Phone Number` - Phone numbers of Palgate accounts you already linked (empty when configuring the first device), or "Link New Device"
+
+When adding your first gate, you will be guided through the process of linking your Palgate app to Home Assistant. Note that the Palgate app typically allows up to two Linked Devices. Once the linking is successful, you will complete the gate selection and configuration. 
+
+If your Palgate account is authorized to control more than one gate, you can select and configure any/all of them, one by one. You can also link other phones (accounts) to this integration, and configure the gates those phones are authorized for, the same way.
 
 ## Advanced Configuration
 1. `Time (sec) gate takes to open` - The time it takes for the gate to open, in seconds (default 25)
