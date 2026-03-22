@@ -1,42 +1,39 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "Device is already configured",
-            "reconfigure_successful": "Gate entry reconfigured succefully"
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "device_id": "Device ID",
+          "phone_number": "Linked Phone Number"
         },
-        "error": {
-            "cannot_connect": "Failed to connect",
-            "invalid_auth": "Invalid authentication",
-            "unknown": "Unexpected error",
-            "cant_reconfigure_device_id": "Device ID cannot be reconfigured. Update rejected"
+        "data_description": {
+          "device_id": "Device ID of the gate, can be found in the Palgate app",
+          "phone_number": "Phone number of Palgate Linked Device authorized for gate"
         },
-        "step": {
-            "user": {
+        "sections": {
+            "advanced_options": {
+                "name": "Advanced Options",
+                "description": "If you are unsure, leave at default values",
                 "data": {
-                    "device_id": "Device ID",
-                    "phone_number": "Linked Phone Number"
+                    "seconds_to_open": "Time (sec) gate takes to open",
+                    "seconds_open": "Time (sec) gate remains open",
+                    "seconds_to_close": "Time (sec) gate takes to close",
+                    "allow_invert_as_stop": "Allow triggering gate while opening, to invert direction"
                 },
                 "data_description": {
-                    "device_id": "Device ID of the gate, can be found in the Palgate app",
-                    "phone_number": "Phone number of Palgate Linked Device authorized for gate"
-                },
-                "sections": {
-                    "advanced_options": {
-                        "name": "Advanced Options",
-                        "description": "If you are unsure, leave at default values",
-                        "data": {
-                            "seconds_to_open": "Time (sec) gate takes to open",
-                            "seconds_open": "Time (sec) gate remains open",
-                            "seconds_to_close": "Time (sec) gate takes to close",
-                            "allow_invert_as_stop": "Allow triggering gate while opening, to invert direction"
-                        },
-                        "data_description": {
-                            "allow_invert_as_stop": "If selected, STOP will trigger the gate again during open"
-                        }
-                    }
+                    "allow_invert_as_stop": "If selected, STOP will trigger the gate again during open"
                 }
-            },
-            "reconfigure": {
+            }
+        }
+      },
+      "select_device": {
+        "title": "Select gate",
+        "description": "Select gate to configure (linked to phone {phone})",
+        "data": {
+          "device_id": "Gate"
+        }
+      },
+      "reconfigure": {
                 "data": {
                     "device_id": "Device ID"
                 },
@@ -59,9 +56,21 @@
                     }
                 }
             }
-        },
-        "progress": {
-            "wait_for_qr": "Please open the Palgate app on your phone, select LINK A DEVICE on the LINKED DEVICES page and then scan this QR code. \n\nWaiting...\n\n\n {qr_code}"
-        }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "cant_reconfigure_device_id": "Device ID cannot be reconfigured. Update rejected"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "cannot_fetch_devices": "Could not retrieve gate list from server. Please try again.",
+      "no_devices_found": "No more configurable gates for phone {phone}.",
+      "reconfigure_successful": "Gate entry reconfigured succefully"
+    },
+    "progress": {
+      "wait_for_qr": "Please open the Palgate app on your phone, select LINK A DEVICE on the LINKED DEVICES page and then scan this QR code. \n\nWaiting...\n\n\n {qr_code}"
     }
+  }
 }

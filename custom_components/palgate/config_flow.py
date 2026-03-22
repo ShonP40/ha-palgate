@@ -21,12 +21,16 @@ from homeassistant.helpers.selector import selector
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.exceptions import HomeAssistantError 
 
+from .pylgate.token_generator import generate_token
 from .const import DOMAIN as PALGATE_DOMAIN
 from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
+DEVICES_URL = "https://api1.pal-es.com/v1/bt/devices"
+INIT_URL = "https://api1.pal-es.com/v1/bt/un/secondary/init/"
+
+class PalgateFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
     """Config flow for Palgate."""
 
     VERSION = 3
@@ -43,16 +47,8 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
 
         if user_input is not None:
 
-            device_id: str = user_input[CONF_DEVICE_ID]
-
-            if await self._async_existing_devices(device_id):
-                return self.async_abort(reason="already_configured")
-
-            await self.async_set_unique_id(device_id)
-            self._abort_if_unique_id_configured()
-
             self.user_input = user_input
-            
+
             if user_input[CONF_PHONE_NUMBER] == CONF_LINK_NEW_DEVICE:
                 return await self.async_step_create_linked_device(
                     user_input=user_input,
@@ -66,14 +62,14 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
                     self.current_linked_devices[
                         user_input[CONF_PHONE_NUMBER]][1]
 
-            return await self.async_step_complete_new_entry()
+            return await self.async_step_select_device()
 
         if self._task:              # Are we creating a new Linked Device?
 
             if self._task.done():
 
                 return self.async_show_progress_done(
-                    next_step_id="complete_new_entry"
+                    next_step_id="select_device"
                     )
 
             _LOGGER.debug("Link task not done. Keep spinning")
@@ -95,8 +91,107 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
             errors={},
         )
 
-    async def async_step_complete_new_entry(
+    async def async_step_select_device(
         self, user_input: dict[str, Any] | None = None
+        ) -> FlowResult:
+        """Choose which gate to configure.
+
+        Three potential routes:
+        - No unconfigured devices (none left) -> abort
+        - Exactly one unconfigured device -> skip device selection UI, complete configuration
+        - Multiple unconfigured devices -> show gate select dropdown
+        """
+
+        # Fetch and filter on first entry to this step
+        if not hasattr(self, "_unconfigured_devices"):
+            try:
+                all_devices = await self._fetch_devices()
+            except Exception as exc:
+                _LOGGER.error("Failed to fetch device list: %s", exc)
+                return self.async_abort(reason="cannot_fetch_devices")
+
+            self._unconfigured_devices = [
+                d for d in all_devices
+                if not await self._async_existing_devices(d["id"])
+            ]
+
+        # -- Case 1: nothing left to configure ------------------------------
+        if not self._unconfigured_devices:
+            return self.async_abort(reason="no_devices_found",
+                        description_placeholders={
+                        "phone": self._linked_phone_number
+                        })
+
+        # -- Case 2: exactly one device — skip the selection step -----------
+        if len(self._unconfigured_devices) == 1:
+            return await self.async_step_complete_new_entry(
+                device=self._unconfigured_devices[0]
+            )
+
+        # -- Case 3: multiple devices — present a dropdown ------------------
+        if user_input is not None:
+            chosen = next(
+                d for d in self._unconfigured_devices
+                if d["id"] == user_input[CONF_DEVICE_ID]
+            )
+            return await self.async_step_complete_new_entry(device=chosen)
+
+        options = [
+            {
+                "value": d["id"],
+                "label": " | ".join(filter(None, [
+                    d.get("customName1") or d.get("name1") or d["id"],
+                    d.get("address"),
+                ])),
+            }
+            for d in self._unconfigured_devices
+        ]
+
+        return self.async_show_form(
+            step_id="select_device",
+            data_schema=vol.Schema({
+                vol.Required(CONF_DEVICE_ID): selector({
+                    "select": {
+                        "mode": "dropdown",
+                        "options": options,
+                    }
+                }),
+            }),
+            errors={},
+            description_placeholders={"phone": self._linked_phone_number},
+        )
+
+    async def _fetch_devices(self) -> list[dict]:
+        """Call the Palgate API and return the full list of devices."""
+
+        _session = async_get_clientsession(self.hass)
+
+        _headers = {
+            "x-bt-token": generate_token(bytes.fromhex(self._linked_token),int(self._linked_phone_number),int(self._linked_token_type))
+        }
+
+        async with _session.get(url=DEVICES_URL, headers=_headers) as resp:
+
+            if resp.status == HTTPStatus.UNAUTHORIZED:
+                raise HomeAssistantError("Unauthorized when fetching devices")
+
+            if resp.status != HTTPStatus.OK:
+                raise HomeAssistantError(
+                    f"Unexpected status {resp.status} fetching devices"
+                )
+
+            try:
+                payload = json.loads(await resp.text())
+            except json.JSONDecodeError as exc:
+                raise HomeAssistantError(
+                    "Device list response was not valid JSON"
+                ) from exc
+
+        _LOGGER.debug("Device list response: %s", payload)
+        return payload.get("devices", [])
+
+    async def async_step_complete_new_entry(
+        self, user_input: dict[str, Any] | None = None, device: dict | None = None
         ) -> FlowResult:
 
         if self._task:
@@ -105,12 +200,19 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
                 _LOGGER.error(_exc)
                 return self.async_abort(reason=_exc.args[0])
 
+        device_id    = device["id"]
+        display_name = device.get("customName1") or device.get("name1") or device_id
+
+        await self.async_set_unique_id(device_id)
+        self._abort_if_unique_id_configured()
+
+        self.user_input[CONF_DEVICE_ID]    = device_id
         self.user_input[CONF_PHONE_NUMBER] = self._linked_phone_number
-        self.user_input[CONF_TOKEN] = self._linked_token
-        self.user_input[CONF_TOKEN_TYPE] = self._linked_token_type
+        self.user_input[CONF_TOKEN]        = self._linked_token
+        self.user_input[CONF_TOKEN_TYPE]   = self._linked_token_type
 
         return self.async_create_entry(
-            title=f"{self.user_input[CONF_DEVICE_ID]} (via {self.user_input[CONF_PHONE_NUMBER]})",
+            title=f"{display_name} (via {self._linked_phone_number})",
             data=self.user_input,
         )
 
@@ -151,7 +253,7 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
 
         _session = async_get_clientsession(self.hass)
 
-        _url = 'https://api1.pal-es.com/v1/bt/un/secondary/init/' +\
+        _url = INIT_URL +\
             f'{self.linking_code}'
 
         # Work around an apparent HASS quirk, - when show_progress is called
@@ -179,12 +281,12 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
 
         _LOGGER.debug(f"Linked Device response received. URL: {resp.url}, Response headers: {dict(resp.headers)}")
         _LOGGER.debug(f"Response payload: {_response}")
-        
+
         self._linked_phone_number = _response["user"]["id"]
         self._linked_token = _response["user"]["token"]
         self._linked_token_type = _response["secondary"]
         self._linked_status = _response["status"]
-    
+
     async def async_step_reconfigure(
         self, user_input: dict[str, Any] | None = None
         ) -> FlowResult:
@@ -212,30 +314,20 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
             errors={},
         )
 
-    async def _async_existing_devices(self, area: str) -> bool:
-        """Find existing devices."""
+    async def _async_existing_devices(self, device_id: str) -> bool:
+        """Return True if this device_id is already configured."""
 
         existing_devices = [
             f"{entry.data.get(CONF_DEVICE_ID)}"
             for entry in self._async_current_entries()
         ]
-
-        return area in existing_devices
+        return device_id in existing_devices
 
     def _create_schema(self) -> vol.Schema:
 
         def_device_id  = self.entry.data[CONF_DEVICE_ID] \
             if self.source == config_entries.SOURCE_RECONFIGURE \
             else None
-        def_token      = self.entry.data[CONF_TOKEN] \
-            if self.source == config_entries.SOURCE_RECONFIGURE \
-            else None
-        def_phone      = self.entry.data[CONF_PHONE_NUMBER] \
-            if self.source == config_entries.SOURCE_RECONFIGURE \
-            else None
-        def_token_type = self.entry.data[CONF_TOKEN_TYPE] \
-            if self.source == config_entries.SOURCE_RECONFIGURE \
-            else "1"
         def_sec_to_open  = \
             self.entry.data[CONF_ADVANCED][CONF_SECONDS_TO_OPEN] \
             if self.source == config_entries.SOURCE_RECONFIGURE \
@@ -253,13 +345,9 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
             if self.source == config_entries.SOURCE_RECONFIGURE \
             else False
 
-        _schema = vol.Schema(
-        {
-            vol.Required(CONF_DEVICE_ID, default=def_device_id): str,
-        })
 
-        if not self.source == config_entries.SOURCE_RECONFIGURE:
-            _schema = _schema.extend(
+        if self.source != config_entries.SOURCE_RECONFIGURE:
+            _schema = vol.Schema(
                 {
                 vol.Required(CONF_PHONE_NUMBER): selector({
                     "select": {
@@ -268,6 +356,11 @@ class PollenvarselFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
                             [ CONF_LINK_NEW_DEVICE ],
                     }
                 })
+            })
+        else:
+            _schema = vol.Schema(
+            {
+                vol.Required(CONF_DEVICE_ID, default=def_device_id): str,
             })
 
         _schema = _schema.extend(
