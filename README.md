@@ -9,7 +9,7 @@ Unofficial integration, use at your own risk.
 
 ## Note for Release 1.5.x
 
-Release 1.5 brings a simplified and streamlined configuration process. You no longer need to manually look up and type your gate ID from the Palgate app - it is now fetched automatically. If your Palgate account is authorized for more than one gate, you will be presented with a list to choose from. One gate per configuration entry; configure as many as you need.
+Release 1.5 brings a simplified and streamlined configuration process. You no longer need to manually look up and type your gate ID from the Palgate app - it is now fetched automatically. If your Palgate account is authorized for more than one gate, you will be presented with a list to choose from. One gate per configuration entry; configure as many as you need. Thanks to [adi6409](https://github.com/adi6409) for providing valuable info from his multi-gate setup.
 
 
 ## Note for Release 1.4.x
