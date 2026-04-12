@@ -72,5 +72,17 @@
     "progress": {
       "wait_for_qr": "Please open the Palgate app on your phone, select LINK A DEVICE on the LINKED DEVICES page and then scan this QR code. \n\nWaiting...\n\n\n {qr_code}"
     }
+  },
+  "entity": {
+    "select": {
+      "relay_mode": {
+        "name": "Relay Mode",
+        "state": {
+          "normal":      "Normal",
+          "hold_open":   "Hold Open",
+          "hold_closed": "Hold Closed"
+        }
+      }
+    }
   }
 }

@@ -3,24 +3,10 @@
 ![GitHub Release](https://img.shields.io/github/v/release/doron1/ha-palgate?style=flat-square)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
-This is a Home Assistant integration for Palgate gate controllers.
+This is a Home Assistant integration for Palgate gate controllers. It creates a gate/cover entity in Home Assistant, allowing for gate control from HA dashboards and automations.
 
-Unofficial integration, use at your own risk.
+This is an unofficial integration, use at your own risk.
 
-## Note for Release 1.5.x
-
-Release 1.5 brings a simplified and streamlined configuration process. You no longer need to manually look up and type your gate ID from the Palgate app - it is now fetched automatically. If your Palgate account is authorized for more than one gate, you will be presented with a list to choose from. One gate per configuration entry; configure as many as you need. Thanks to [adi6409](https://github.com/adi6409) for providing valuable info from his multi-gate setup.
-
-
-## Note for Release 1.4.x
-
-As of release 1.4 of this integration, each gate is set up as a separate device, with a single "cover" type control. In previous releases, if you added multiple gates, they were all created as multiple "cover" entities under one device. The new setup allows for better control of multiple gates, e.g. assigning them to different areas.
-
-The entity names for the gates remain the same, so existing automations, scripts or scenes *should* continue functioning as before, but it is advised to double check that everything still works as planned.
-
-## Administrivia - New Maintainer
-
-As of 5 March 2026, I ([doron1](https://github.com/doron1)) will be taking over as maintainer of this repo. On behalf of the Palgate users' community I'd like to express deep gratitudes to [@ShonP40](https://github.com/ShonP40), who provided an excellent home and ongoing code maintainance to this integration for quite a few years, enabling the rest of us to control our home, community or municipal gates via Home Assistant.
 
 ## Installation
 
@@ -37,7 +23,7 @@ As of 5 March 2026, I ([doron1](https://github.com/doron1)) will be taking over 
 1. ~~`Device ID` - This is your physical Palgate device ID. It can be obtained from the settings page of each gate in the Palgate app~~As of release 1.5.0, this is not needed anymore and is configured automatically for you.
 2. `Linked Phone Number` - Phone numbers of Palgate accounts you already linked (empty when configuring the first device), or "Link New Device"
 
-When adding your first gate, you will be guided through the process of linking your Palgate app to Home Assistant. Note that the Palgate app typically allows up to two Linked Devices. Once the linking is successful, you will complete the gate selection and configuration. 
+When adding your first gate, you will be guided through the process of linking your Palgate app to Home Assistant. Note that the Palgate app typically allows up to two Linked Devices. Once the linking is successful, you will be guided to complete the gate selection and configuration. 
 
 If your Palgate account is authorized to control more than one gate, you can select and configure any/all of them, one by one. You can also link other phones (accounts) to this integration, and configure the gates those phones are authorized for, the same way.
 
@@ -52,10 +38,45 @@ If your Palgate account is authorized to control more than one gate, you can sel
 - Open
 - Stop (in most gates, invert movement)
 - Custom open/close timeouts
+### Select Relay Mode
+Using the Relay Mode selector entity (disabled by default), a user with the proper permissions can control the gate relay operational modes:
+- Normal (open/close work as usual, per the other gate settings)
+- Hold Open (gate opens and remains in the open position, disabling normal open/close control)
+- Hold Close (gate closes and remains in the closed position, disabling normal open/close control)
 
+This entity (new for v1.6 of this integration) is initially created as _disabled_. To use it, you will need to:
+1. Explicitly enable the Relay Mode entity from the device page
+2. Make sure the user (phone) that this gate is linked through, has the special permission for this action (on Palgate app, admin user: Gate settings -> Manager Options -> Users -> Selected user -> "Latch Output 1").\
+➡️If the linked phone's user does not have the right permission, the selector entity will be marked `unavailable`. Once permission is granted, it will become operational.
+
+At this time, this feature supports one output of the Palgate device - output1. This seems to cover most installations.
+
+To use this in an automation, you can use the `select.select_option` action with the selector entity of the gate (e.g. `select.4G123456789_relay_mode`), available options: `normal`, `hold_open` and `hold_closed`.
 ## Notes
 - Palgate's API does not report the position of the gate. In practice, this means that Home Assistant does not have definitive knowledge of the gate being closed, being actively moving, or its current position. This in turn means that the indications of "opening", "closed" etc. are in fact simulated, based on your configured timing parameters (see [Advanced Configuration](#advanced-configuration) above).
 
+## Note for Release 1.6.x
+
+Release 1.6 introduces a new, _optional_ entity to the gate device. This new feature allows a user with the right permission to select between three gate operational modes: Normal, Hold Open and Hold Closed. See [Select Relay Mode](#select-relay-mode) above.
+
+**Note**: Once you enable this entity, the integration will be polling the Palgate API server periodically for status. This is normal for HA integrations, but it is new for this version so worth mentioning.
+
+Thanks to Matan for proposing this feature and providing valuable info.
+
+## Note for Release 1.5.x
+
+Release 1.5 brings a simplified and streamlined configuration process. You no longer need to manually look up and type your gate ID from the Palgate app - it is now fetched automatically. If your Palgate account is authorized for more than one gate, you will be presented with a list to choose from. One gate per configuration entry; configure as many as you need. Thanks to [adi6409](https://github.com/adi6409) for providing valuable info from his multi-gate setup.
+
+
+## Note for Release 1.4.x
+
+As of release 1.4 of this integration, each gate is set up as a separate device, with a single "cover" type control. In previous releases, if you added multiple gates, they were all created as multiple "cover" entities under one device. The new setup allows for better control of multiple gates, e.g. assigning them to different areas.
+
+The entity names for the gates remain the same, so existing automations, scripts or scenes *should* continue functioning as before, but it is advised to double check that everything still works as planned.
+
+## Administrivia - New Maintainer
+
+As of 5 March 2026, I ([doron1](https://github.com/doron1)) will be taking over as maintainer of this repo. On behalf of the Palgate users' community I'd like to express deep gratitudes to [@ShonP40](https://github.com/ShonP40), who provided an excellent home and ongoing code maintainance to this integration for quite a few years, enabling the rest of us to control our home, community or municipal gates via Home Assistant.
 ## Credits
 - [sindrebroch](https://github.com/sindrebroch) - Original creator
 - [ShonP40](https://github.com/ShonP40) - Devoted owner/maintainer of this integration for many years
