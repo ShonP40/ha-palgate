@@ -11,8 +11,19 @@ from voluptuous.error import Error
 import logging
 
 from .pylgate.token_generator import generate_token
+from .const import *
 
 _LOGGER: logging.Logger = logging.getLogger(__name__)
+
+# Output relay modes: maps friendly name -> (output1LatchStatus, output1Disabled)
+RELAY_MODES: dict[str, tuple[bool, bool]] = {
+    GATE_MODE_NORMAL:      (False, False),
+    GATE_MODE_HOLD_OPEN:   (True,  True),
+    GATE_MODE_HOLD_CLOSED:  (False, True),
+}
+RELAY_MODES_INVERSE: dict[tuple[bool, bool], str] = {
+    v: k for k, v in RELAY_MODES.items()
+}
 
 class PalgateApiClient:
     """Main class for handling connection with."""
@@ -43,9 +54,10 @@ class PalgateApiClient:
         self.next_open: datetime = datetime.now()
         self.next_closing: datetime = datetime.now()
         self.next_closed: datetime = datetime.now()
+        self.relay_mode_permitted: bool = False  # updated by get_relay_mode()
 
-    def url(self) -> str:
-        """Build the url by extracting the gate number (:1 or :2, etc...) and set it in the outputNum"""
+    def _parsed_device_id(self) -> tuple[str, int]:
+        """Return (base_device_id, output_num), parsing any ':N' suffix."""
         device_id = self.device_id
         output_num = 1  # default
 
@@ -55,12 +67,19 @@ class PalgateApiClient:
                 device_id = base_id
                 output_num = int(output)
 
-        return f"https://api1.pal-es.com/v1/bt/device/{device_id}/open-gate?openBy=100&outputNum={output_num}"
+        return device_id, output_num
+
+    def url(self) -> str:
+        """Build the gate-open URL."""
+        device_id, output_num = self._parsed_device_id()
+        return (
+            f"https://api1.pal-es.com/v1/bt/device/{device_id}"
+            f"/open-gate?openBy=100&outputNum={output_num}"
+        )
 
     def headers(self) -> dict:
-        """Get headers"""
+        """Get headers. Token generates dynamically as it includes a timestamp"""
 
-        temporal_token = generate_token(bytes.fromhex(self.token),int(self.phone_number),int(self.token_type))
         return {
             "Accept": "*/*",
             "Accept-Encoding": "gzip, deflate, br",
@@ -68,7 +87,9 @@ class PalgateApiClient:
             "Connection": "keep-alive",
             "Content-Type": "application/json",
             "User-Agent": "BlueGate/115 CFNetwork/1128.0.1 Darwin/19.6.0",
-            "x-bt-token": f"{temporal_token}",
+            "x-bt-token": f"{generate_token(bytes.fromhex(self.token),
+                            int(self.phone_number),
+                            int(self.token_type))}",
         }
 
     def is_opening(self) -> bool:
@@ -81,7 +102,6 @@ class PalgateApiClient:
         
         return True if (self.next_closed > datetime.now() and self.next_closing < datetime.now()) else False
 
-
     def is_closed(self) -> bool:
         """Current state of gate is open."""
 
@@ -91,7 +111,7 @@ class PalgateApiClient:
         """Open Palgate device."""
 
         async with self._session.get(url=self.url(), headers=self.headers()) as resp:
-            _LOGGER.debug(f"API open request issued. URL: {resp.url}, Headers: {dict(resp.request_info.headers)}")
+            _LOGGER.debug(f"API open request issued. URL: {resp.url}")
             if resp.status == HTTPStatus.UNAUTHORIZED:
                 raise Error(f"Unauthorized. {resp.status}")
             if resp.status != HTTPStatus.OK:
@@ -103,13 +123,14 @@ class PalgateApiClient:
             self.next_closed = datetime.now() + timedelta(seconds=(self.seconds_to_open + self.seconds_open + self.seconds_to_close))
 
             return await resp.json()
+
     async def invert_gate(self) -> Any:
         """Trigger the Palgate device again during open"""
 
         if (self.allow_invert_as_stop and self.is_opening()):
 
             async with self._session.get(url=self.url(), headers=self.headers()) as resp:
-                _LOGGER.debug(f"API invert/open request issued. URL: {resp.url}, Headers: {dict(resp.request_info.headers)}")
+                _LOGGER.debug(f"API invert/open request issued. URL: {resp.url}")
                 if resp.status == HTTPStatus.UNAUTHORIZED:
                     raise Error(f"Unauthorized. {resp.status}")
                 if resp.status != HTTPStatus.OK:
@@ -120,3 +141,49 @@ class PalgateApiClient:
                 self.next_closed = datetime.now() + timedelta(seconds=(self.seconds_to_close))  # Best guess
 
                 return await resp.json()
+
+    async def get_relay_mode(self) -> str:
+        """Get current output relay mode. Returns a key in RELAY_MODES.
+        Also updates self.relay_mode_permitted."""
+
+        device_id, _ = self._parsed_device_id()
+        url = f"https://api1.pal-es.com/v1/bt/device/{device_id}"
+
+        async with self._session.get(url=url, headers=self.headers()) as resp:
+            _LOGGER.debug(f"API get_relay_mode request. URL: {resp.url}")
+            if resp.status == HTTPStatus.UNAUTHORIZED:
+                raise Error(f"Unauthorized. {resp.status}")
+            if resp.status != HTTPStatus.OK:
+                raise Error(f"Not OK {resp.status} {await resp.text()}")
+            text = await resp.text()
+
+        _LOGGER.debug(f"API get_relay_mode response: {text}")
+        data = json.loads(text)
+        # API may return the device object directly or wrapped under "device"
+        device = data.get("device", data)
+
+        self.relay_mode_permitted = bool(device.get("output1Latch", False))
+
+        latch = device.get("output1LatchStatus", False)
+        dsbl  = device.get("output1Disabled",    False)
+        return RELAY_MODES_INVERSE.get((latch, dsbl), GATE_MODE_NORMAL)
+
+    async def set_relay_mode(self, mode: str) -> None:
+        """Set the output relay mode. mode must be a key in RELAY_MODES."""
+
+        latch, dsbl = RELAY_MODES[mode]
+        device_id, output_num = self._parsed_device_id()
+
+        url = (
+            f"https://api1.pal-es.com/v1/bt/device/{device_id}/open-gate"
+            f"?outputNum={output_num}"
+            f"&output1LatchStatus={str(latch).lower()}"
+            f"&output1Disabled={str(dsbl).lower()}"
+        )
+
+        async with self._session.get(url=url, headers=self.headers()) as resp:
+            _LOGGER.debug(f"API set_relay_mode '{mode}'. URL: {resp.url}")
+            if resp.status == HTTPStatus.UNAUTHORIZED:
+                raise Error(f"Unauthorized. {resp.status}")
+            if resp.status != HTTPStatus.OK:
+                raise Error(f"Not OK {resp.status} {await resp.text()}")
