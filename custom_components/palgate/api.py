@@ -16,7 +16,7 @@ from .const import *
 
 _LOGGER: logging.Logger = logging.getLogger(__name__)
 
-# Output relay modes: maps friendly name -> (output1LatchStatus, output1Disabled)
+# Output relay modes: maps friendly name -> (output#LatchStatus, output#Disabled)
 RELAY_MODES: dict[str, tuple[bool, bool]] = {
     GATE_MODE_NORMAL:      (False, False),
     GATE_MODE_HOLD_OPEN:   (True,  True),
@@ -143,16 +143,16 @@ class PalgateApiClient:
             return reply
 
     async def get_relay_mode(self) -> str:
-        device_id, _ = self._parsed_device_id()
+        device_id, output_num = self._parsed_device_id()
         url = f"https://api1.pal-es.com/v1/bt/device/{device_id}"
 
         data = await self._api_request(url)
         device = data.get("device", data)
 
-        self.relay_mode_permitted = bool(device.get(f"output1Latch", False))
+        self.relay_mode_permitted = bool(device.get(f"output{output_num}Latch", False))
 
-        latch = device.get(f"output1LatchStatus", False)
-        dsbl  = device.get(f"output1Disabled",    False)
+        latch = device.get(f"output{output_num}LatchStatus", False)
+        dsbl  = device.get(f"output{output_num}Disabled",    False)
         return RELAY_MODES_INVERSE.get((latch, dsbl), GATE_MODE_NORMAL)
 
     async def set_relay_mode(self, mode: str) -> None:
@@ -162,8 +162,8 @@ class PalgateApiClient:
         device_id, output_num = self._parsed_device_id()
         url = (
             f"{self._open_url()}"
-            f"&output1LatchStatus={str(latch).lower()}"
-            f"&output1Disabled={str(dsbl).lower()}"
+            f"&output{output_num}LatchStatus={str(latch).lower()}"
+            f"&output{output_num}Disabled={str(dsbl).lower()}"
         )
 
         await self._api_request(url)
