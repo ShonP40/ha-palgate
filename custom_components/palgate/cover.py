@@ -14,10 +14,14 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.exceptions import ServiceValidationError
+import logging
 
 from .api import PalgateApiClient
 from .const import DOMAIN as PALGATE_DOMAIN
 from .const import *
+
+_LOGGER: logging.Logger = logging.getLogger(__name__)
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -94,9 +98,17 @@ class PalgateCover(CoverEntity):
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
 
-        await self.api.open_gate()
+        try:
+            await self.api.open_gate()
+        except Exception as exc:
+            _LOGGER.warning("Gate operation failed. %s", exc)
+            raise ServiceValidationError(str(exc)) from exc
 
     async def async_stop_cover(self, **kwargs: Any) -> None:
         """Stop the cover - only if allowed in config (usually auto-close)"""
 
-        await self.api.invert_gate()
+        try:
+            await self.api.invert_gate()
+        except Exception as exc:
+            _LOGGER.warning("Gate operation failed. %s", exc)
+            raise ServiceValidationError(str(exc)) from exc

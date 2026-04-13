@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import aiohttp
 from voluptuous.error import Error
 import logging
+from homeassistant.exceptions import HomeAssistantError
 
 from .pylgate.token_generator import generate_token
 from .const import *
@@ -69,15 +70,15 @@ class PalgateApiClient:
 
         return device_id, output_num
 
-    def url(self) -> str:
-        """Build the gate-open URL."""
+    def _open_url(self) -> str:
+        """Build the base open-gate URL."""
         device_id, output_num = self._parsed_device_id()
         return (
             f"https://api1.pal-es.com/v1/bt/device/{device_id}"
             f"/open-gate?openBy=100&outputNum={output_num}"
         )
 
-    def headers(self) -> dict:
+    def _headers(self) -> dict:
         """Get headers. Token generates dynamically as it includes a timestamp"""
 
         return {
@@ -91,6 +92,22 @@ class PalgateApiClient:
                             int(self.phone_number),
                             int(self.token_type))}",
         }
+
+    async def _api_request(self, url: str) -> dict:
+        """Execute a GET to any Palgate API URL, handle HTTP and API errors, return parsed JSON."""
+        async with self._session.get(url=url, headers=self._headers()) as resp:
+            _LOGGER.debug(f"API request. URL: {resp.url}")
+            if resp.status == HTTPStatus.UNAUTHORIZED:
+                raise HomeAssistantError(f"Unauthorized. {resp.status}")
+            if resp.status != HTTPStatus.OK:
+                raise HomeAssistantError(f"Not OK {resp.status} {await resp.text()}")
+            reply = await resp.json()
+
+        _LOGGER.debug(f"API response: {reply}")
+        if reply.get("err"):
+            raise HomeAssistantError(f"API Request Error: {reply.get('msg') or reply.get('err')}")
+        
+        return reply
 
     def is_opening(self) -> bool:
         """Current state of gate is opening."""
@@ -110,62 +127,32 @@ class PalgateApiClient:
     async def open_gate(self) -> Any:
         """Open Palgate device."""
 
-        async with self._session.get(url=self.url(), headers=self.headers()) as resp:
-            _LOGGER.debug(f"API open request issued. URL: {resp.url}")
-            if resp.status == HTTPStatus.UNAUTHORIZED:
-                raise Error(f"Unauthorized. {resp.status}")
-            if resp.status != HTTPStatus.OK:
-                error_text = json.loads(await resp.text())
-                raise Error(f"Not OK {resp.status} {error_text}")
-
-            self.next_open = datetime.now() + timedelta(seconds=self.seconds_to_open)
-            self.next_closing = datetime.now() + timedelta(seconds=(self.seconds_to_open + self.seconds_open))
-            self.next_closed = datetime.now() + timedelta(seconds=(self.seconds_to_open + self.seconds_open + self.seconds_to_close))
-
-            return await resp.json()
+        reply = await self._api_request(self._open_url())
+        self.next_open    = datetime.now() + timedelta(seconds=self.seconds_to_open)
+        self.next_closing = datetime.now() + timedelta(seconds=(self.seconds_to_open + self.seconds_open))
+        self.next_closed  = datetime.now() + timedelta(seconds=(self.seconds_to_open + self.seconds_open + self.seconds_to_close))
+        return reply
 
     async def invert_gate(self) -> Any:
         """Trigger the Palgate device again during open"""
 
-        if (self.allow_invert_as_stop and self.is_opening()):
-
-            async with self._session.get(url=self.url(), headers=self.headers()) as resp:
-                _LOGGER.debug(f"API invert/open request issued. URL: {resp.url}")
-                if resp.status == HTTPStatus.UNAUTHORIZED:
-                    raise Error(f"Unauthorized. {resp.status}")
-                if resp.status != HTTPStatus.OK:
-                    error_text = json.loads(await resp.text())
-                    raise Error(f"Not OK {resp.status} {error_text}")
-
-                self.next_closing = datetime.now()
-                self.next_closed = datetime.now() + timedelta(seconds=(self.seconds_to_close))  # Best guess
-
-                return await resp.json()
+        if self.allow_invert_as_stop and self.is_opening():
+            reply = await self._api_request(self._open_url())
+            self.next_closing = datetime.now()
+            self.next_closed  = datetime.now() + timedelta(seconds=self.seconds_to_close)  # Best guess
+            return reply
 
     async def get_relay_mode(self) -> str:
-        """Get current output relay mode. Returns a key in RELAY_MODES.
-        Also updates self.relay_mode_permitted."""
-
         device_id, _ = self._parsed_device_id()
         url = f"https://api1.pal-es.com/v1/bt/device/{device_id}"
 
-        async with self._session.get(url=url, headers=self.headers()) as resp:
-            _LOGGER.debug(f"API get_relay_mode request. URL: {resp.url}")
-            if resp.status == HTTPStatus.UNAUTHORIZED:
-                raise Error(f"Unauthorized. {resp.status}")
-            if resp.status != HTTPStatus.OK:
-                raise Error(f"Not OK {resp.status} {await resp.text()}")
-            text = await resp.text()
-
-        _LOGGER.debug(f"API get_relay_mode response: {text}")
-        data = json.loads(text)
-        # API may return the device object directly or wrapped under "device"
+        data = await self._api_request(url)
         device = data.get("device", data)
 
-        self.relay_mode_permitted = bool(device.get("output1Latch", False))
+        self.relay_mode_permitted = bool(device.get(f"output1Latch", False))
 
-        latch = device.get("output1LatchStatus", False)
-        dsbl  = device.get("output1Disabled",    False)
+        latch = device.get(f"output1LatchStatus", False)
+        dsbl  = device.get(f"output1Disabled",    False)
         return RELAY_MODES_INVERSE.get((latch, dsbl), GATE_MODE_NORMAL)
 
     async def set_relay_mode(self, mode: str) -> None:
@@ -173,17 +160,10 @@ class PalgateApiClient:
 
         latch, dsbl = RELAY_MODES[mode]
         device_id, output_num = self._parsed_device_id()
-
         url = (
-            f"https://api1.pal-es.com/v1/bt/device/{device_id}/open-gate"
-            f"?outputNum={output_num}"
+            f"{self._open_url()}"
             f"&output1LatchStatus={str(latch).lower()}"
             f"&output1Disabled={str(dsbl).lower()}"
         )
 
-        async with self._session.get(url=url, headers=self.headers()) as resp:
-            _LOGGER.debug(f"API set_relay_mode '{mode}'. URL: {resp.url}")
-            if resp.status == HTTPStatus.UNAUTHORIZED:
-                raise Error(f"Unauthorized. {resp.status}")
-            if resp.status != HTTPStatus.OK:
-                raise Error(f"Not OK {resp.status} {await resp.text()}")
+        await self._api_request(url)
