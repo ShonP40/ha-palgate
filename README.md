@@ -54,13 +54,14 @@ At this time, this feature supports one output of the Palgate device - output1. 
 To use this in an automation, you can use the `select.select_option` action with the selector entity of the gate (e.g. `select.4G123456789_relay_mode`), available options: `normal`, `hold_open` and `hold_closed`.
 ## Troubleshooting
 ### Secondary Device Not Authorized
-You might encounter this popup when trying to perform the open action:
+You might encounter this error message when trying to perform a gate action (like open):
 ```
 Failed to perform the action cover/open_cover. Not OK 400 {'err': 'not authorized', 'msg': 'Secondary device not authorized!', 'status': 'failed'}
 ```
 
-This means your account is not allowed to use the `Device Linking` function.
-To use it, ask your administrator to enable it globally or for your user account.
+This means your account is not allowed to use the `Linked Device` function for the gate you are trying to open.
+To use it, ask the administrator of that gate to enable it, either globally for the gate or specifically for your user account.  
+If you are the administrator (e.g. single gate / private home), you can do it via the Palgate App: Gate Settings -> Manager Options -> Users -> `your user` -> Linked Device.
 
 For more details, see the Palgate tutorials: [Device linking](https://www.pal-es.com/tutorials?questionId=e9760d7e-fef3-4637-8cad-096940e2511e) | [User management](https://www.pal-es.com/tutorials?questionId=7af12cae-1854-4f55-93f6-f0f25391480b)
 
