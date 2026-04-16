@@ -138,7 +138,7 @@ class PalgateApiClient:
 
         if self.allow_invert_as_stop and self.is_opening():
             reply = await self._api_request(self._open_url())
-            self.next_closing = datetime.now()
+            self.next_open = self.next_closing = datetime.now()
             self.next_closed  = datetime.now() + timedelta(seconds=self.seconds_to_close)  # Best guess
             return reply
 
