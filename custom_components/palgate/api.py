@@ -142,12 +142,17 @@ class PalgateApiClient:
             self.next_closed  = datetime.now() + timedelta(seconds=self.seconds_to_close)  # Best guess
             return reply
 
+    async def get_device_data(self) -> dict:
+        """Fetch full device data from the API."""
+        device_id, _ = self._parsed_device_id()
+        url = f"https://api1.pal-es.com/v1/bt/device/{device_id}"
+        data = await self._api_request(url)
+        return data.get("device", data)
+        
     async def get_relay_mode(self) -> str:
         device_id, output_num = self._parsed_device_id()
-        url = f"https://api1.pal-es.com/v1/bt/device/{device_id}"
 
-        data = await self._api_request(url)
-        device = data.get("device", data)
+        device = await self.get_device_data()
 
         self.relay_mode_permitted = bool(device.get(f"output{output_num}Latch", False))
 

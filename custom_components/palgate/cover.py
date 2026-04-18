@@ -80,6 +80,16 @@ class PalgateCover(CoverEntity):
             model="Gate Controller",
         )
 
+        self._address: str | None = None
+        self._address_coord: tuple[str, str] | None = None
+        self._sim_status: str | None = None
+        self._sim_valid_until: str | None = None
+        self._model: str | None = None
+        self._isadmin: bool | None = None
+        self._name1: str | None = None
+        self._customname1: str | None = None
+        self._customname2: str | None = None
+
     @property
     def is_opening(self) -> Optional[bool]:
         """Return if the cover is opening or not."""
@@ -94,6 +104,37 @@ class PalgateCover(CoverEntity):
     def is_closed(self) -> Optional[bool]:
         """Return if the cover is closed or not."""
         return self.api.is_closed()
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return {
+            "address":         self._address,
+            "sim_status":      self._sim_status,
+            "sim_valid_until": self._sim_valid_until,
+            "model":           self._model,
+            "isadmin":         self._isadmin,
+            "address_coord":   self._address_coord,
+            "name1":           self._name1,
+            "customname1":     self._customname1,
+            "customname2":     self._customname2,
+        }
+
+    async def async_added_to_hass(self) -> None:
+        """Fetch device info once on startup."""
+        try:
+            device = await self.api.get_device_data()
+            self._address         = device.get("address")
+            self._sim_status      = device.get("simStatus")
+            self._sim_valid_until = device.get("validUntil")
+            self._model           = device.get("model")
+            self._address_coord   = device.get("addressCoord")
+            self._isadmin         = device.get("admin")
+            self._name1           = device.get("name1")
+            self._customname1     = device.get("customName1")
+            self._customname2     = device.get("customName2")
+            self.async_write_ha_state()
+        except Exception as exc:
+            _LOGGER.warning("Failed to fetch device info: %s", exc)
 
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
