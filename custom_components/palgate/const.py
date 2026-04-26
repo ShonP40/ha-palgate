@@ -24,3 +24,17 @@ SECONDS_TO_CLOSE = 35
 
 # Polling interval, applicable to SELECT platform only (disabled by default)
 SCAN_INTERVAL = timedelta(minutes=1)
+
+# API base URL
+BASE_URL = "https://api1.pal-es.com/v1/bt"
+
+# hass.data key for the shared API client per config entry
+DATA_API = "api"
+
+# Service names
+SERVICE_GET_DEVICE_USERS     = "get_device_users"
+SERVICE_GET_USER_SETTINGS    = "get_user_settings"
+SERVICE_ADD_USER             = "add_user"
+SERVICE_REMOVE_USER          = "remove_user"
+SERVICE_SET_USER_SETTINGS    = "set_user_settings"
+SERVICE_GET_DEVICE_LOG       = "get_device_log"

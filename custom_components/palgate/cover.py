@@ -41,17 +41,7 @@ async def async_setup_entry(
         ),
     )
 
-    api = PalgateApiClient(
-        device_id=device_id,
-        token=entry.data[CONF_TOKEN],
-        token_type=entry.data[CONF_TOKEN_TYPE],
-        phone_number=entry.data[CONF_PHONE_NUMBER],
-        seconds_to_open=entry.data[CONF_ADVANCED][CONF_SECONDS_TO_OPEN],
-        seconds_open=entry.data[CONF_ADVANCED][CONF_SECONDS_OPEN],
-        seconds_to_close=entry.data[CONF_ADVANCED][CONF_SECONDS_TO_CLOSE],
-        allow_invert_as_stop=entry.data[CONF_ADVANCED][CONF_ALLOW_INVERT_AS_STOP],
-        session=async_get_clientsession(hass),
-    )
+    api = hass.data[PALGATE_DOMAIN][entry.entry_id][DATA_API]
         
     async_add_entities(
         PalgateCover(api, description, device_id) for description in COVERS

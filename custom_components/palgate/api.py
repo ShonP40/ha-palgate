@@ -74,7 +74,7 @@ class PalgateApiClient:
         """Build the base open-gate URL."""
         device_id, output_num = self._parsed_device_id()
         return (
-            f"https://api1.pal-es.com/v1/bt/device/{device_id}"
+            f"{BASE_URL}/device/{device_id}"
             f"/open-gate?openBy=100&outputNum={output_num}"
         )
 
@@ -107,6 +107,51 @@ class PalgateApiClient:
         if reply.get("err"):
             raise HomeAssistantError(f"API Request Error: {reply.get('msg') or reply.get('err')}")
         
+        return reply
+
+    async def _api_post(self, url: str, body: dict) -> dict:
+        """POST to a Palgate API URL with a JSON body."""
+        async with self._session.post(url=url, headers=self._headers(), json=body) as resp:
+            _LOGGER.debug(f"API POST {resp.url}")
+            if resp.status == HTTPStatus.UNAUTHORIZED:
+                raise HomeAssistantError(f"Unauthorized. {resp.status}")
+            if resp.status != HTTPStatus.OK:
+                raise HomeAssistantError(f"Not OK {resp.status} {await resp.text()}")
+            reply = await resp.json()
+
+        _LOGGER.debug(f"API response: {reply}")
+        if reply.get("err"):
+            raise HomeAssistantError(f"API Request Error: {reply.get('msg') or reply.get('err')}")
+        return reply
+
+    async def _api_put(self, url: str, body: dict) -> dict:
+        """PUT to a Palgate API URL with a JSON body."""
+        async with self._session.put(url=url, headers=self._headers(), json=body) as resp:
+            _LOGGER.debug(f"API PUT {resp.url}")
+            if resp.status == HTTPStatus.UNAUTHORIZED:
+                raise HomeAssistantError(f"Unauthorized. {resp.status}")
+            if resp.status != HTTPStatus.OK:
+                raise HomeAssistantError(f"Not OK {resp.status} {await resp.text()}")
+            reply = await resp.json()
+
+        _LOGGER.debug(f"API response: {reply}")
+        if reply.get("err"):
+            raise HomeAssistantError(f"API Request Error: {reply.get('msg') or reply.get('err')}")
+        return reply
+
+    async def _api_delete(self, url: str) -> dict:
+        """DELETE a Palgate API URL."""
+        async with self._session.delete(url=url, headers=self._headers()) as resp:
+            _LOGGER.debug(f"API DELETE {resp.url}")
+            if resp.status == HTTPStatus.UNAUTHORIZED:
+                raise HomeAssistantError(f"Unauthorized. {resp.status}")
+            if resp.status != HTTPStatus.OK:
+                raise HomeAssistantError(f"Not OK {resp.status} {await resp.text()}")
+            reply = await resp.json()
+
+        _LOGGER.debug(f"API response: {reply}")
+        if reply.get("err"):
+            raise HomeAssistantError(f"API Request Error: {reply.get('msg') or reply.get('err')}")
         return reply
 
     def is_opening(self) -> bool:
@@ -145,7 +190,7 @@ class PalgateApiClient:
     async def get_device_data(self) -> dict:
         """Fetch full device data from the API."""
         device_id, _ = self._parsed_device_id()
-        url = f"https://api1.pal-es.com/v1/bt/device/{device_id}"
+        url = f"{BASE_URL}/device/{device_id}"
         data = await self._api_request(url)
         return data.get("device", data)
         
@@ -172,3 +217,49 @@ class PalgateApiClient:
         )
 
         await self._api_request(url)
+
+    # ------------------------------------------------------------------
+    # User management
+    # ------------------------------------------------------------------
+
+    async def get_users_page(self, skip: int = 0, limit: int = 50) -> dict:
+        """Fetch one page of authorized users. Returns raw response dict."""
+        device_id, _ = self._parsed_device_id()
+        url = f"{BASE_URL}/device/{device_id}/users-v2?skip={skip}&limit={limit}"
+        return await self._api_request(url)
+
+    async def get_user(self, phone: str) -> dict:
+        """Fetch a single user by E.164 phone number. Returns raw user dict."""
+        device_id, _ = self._parsed_device_id()
+        url  = f"{BASE_URL}/device/{device_id}/user?pn={phone}"
+        data = await self._api_request(url)
+        user = data.get("user")
+        if not user:
+            raise HomeAssistantError(f"User {phone} not found on this device")
+        return user
+
+    async def add_user(self, phone: str, settings: dict | None = None) -> dict:
+        """Add a new authorized user. phone is E.164 and serves as the user ID."""
+        device_id, _ = self._parsed_device_id()
+        url  = f"{BASE_URL}/device/{device_id}/user"
+        body = {"id": phone, **(settings or {})}
+        return await self._api_post(url, body)
+
+    async def remove_user(self, phone: str) -> dict:
+        """Remove an authorized user by E.164 phone number."""
+        device_id, _ = self._parsed_device_id()
+        url = f"{BASE_URL}/device/{device_id}/user?pn={phone}"
+        return await self._api_delete(url)
+
+    async def set_user_settings(self, user_id: str, phone: str, settings: dict | None = None) -> dict:
+        """Update settings for an existing user. phone is E.164 and serves as the user ID."""
+        device_id, _ = self._parsed_device_id()
+        url  = f"{BASE_URL}/device/{device_id}/user"
+        body = {"id": phone, **(settings or {})}
+        return await self._api_put(url, body)
+
+    async def get_device_log(self) -> dict:
+        """Fetch the gate access log for this device."""
+        device_id, _ = self._parsed_device_id()
+        url = f"{BASE_URL}/user/log?id={device_id}"
+        return await self._api_request(url)
