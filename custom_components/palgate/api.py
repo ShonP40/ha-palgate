@@ -251,7 +251,7 @@ class PalgateApiClient:
         url = f"{BASE_URL}/device/{device_id}/user?pn={phone}"
         return await self._api_delete(url)
 
-    async def set_user_settings(self, user_id: str, phone: str, settings: dict | None = None) -> dict:
+    async def set_user_settings(self, phone: str, settings: dict | None = None) -> dict:
         """Update settings for an existing user. phone is E.164 and serves as the user ID."""
         device_id, _ = self._parsed_device_id()
         url  = f"{BASE_URL}/device/{device_id}/user"
