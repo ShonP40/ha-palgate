@@ -20,10 +20,7 @@ This is an unofficial integration, use at your own risk.
 
 ## Configuration
 
-1. ~~`Device ID` - This is your physical Palgate device ID. It can be obtained from the settings page of each gate in the Palgate app~~As of release 1.5.0, this is not needed anymore and is configured automatically for you.
-2. `Linked Phone Number` - Phone numbers of Palgate accounts you already linked (empty when configuring the first device), or "Link New Device"
-
-When adding your first gate, you will be guided through the process of linking your Palgate app to Home Assistant. Note that the Palgate app typically allows up to two Linked Devices. Once the linking is successful, you will be guided to complete the gate selection and configuration. 
+This integration needs the Palgate app to be installed on your phone (Android or iOS). When adding your first gate, you will be guided through the process of linking your Palgate app to Home Assistant. Note that the Palgate app typically allows up to two Linked Devices. Once the linking is successful, you will be guided to complete the gate selection and configuration.
 
 If your Palgate account is authorized to control more than one gate, you can select and configure any/all of them, one by one. You can also link other phones (accounts) to this integration, and configure the gates those phones are authorized for, the same way.
 
@@ -52,6 +49,8 @@ This entity (new for v1.6 of this integration) is initially created as _disabled
 At this time, this feature supports one output of the Palgate device - output1. This seems to cover most installations.
 
 To use this in an automation, you can use the `select.select_option` action with the selector entity of the gate (e.g. `select.4G123456789_relay_mode`), available options: `normal`, `hold_open` and `hold_closed`.
+### Actions (Services)
+Starting with release 1.7.0, the integration exposes several actions, that can be used from scripts, automations or Developer Tools, to query / manage gate users, permissions and access log. For more information check out [ACTIONS](ACTIONS.md).
 ## Notes
 - Palgate's API does not report the position of the gate. In practice, this means that Home Assistant does not have definitive knowledge of the gate being closed, being actively moving, or its current position. This in turn means that the indications of "opening", "closed" etc. are in fact simulated, based on your configured timing parameters (see [Advanced Configuration](#advanced-configuration) above).
 
