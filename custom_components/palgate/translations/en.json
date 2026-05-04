@@ -84,5 +84,91 @@
         }
       }
     }
+  },
+  "services": {
+    "get_device_users": {
+      "name": "Get gate users",
+      "description": "Retrieve the full list of users authorized for a gate, including count and raw user records.",
+      "fields": {
+        "entity_id": {
+          "name": "Gate entity",
+          "description": "The cover entity of the gate to query."
+        }
+      }
+    },
+    "get_user_settings": {
+      "name": "Get user settings",
+      "description": "Retrieve the full user record for a single authorized user, identified by phone number.",
+      "fields": {
+        "entity_id": {
+          "name": "Gate entity",
+          "description": "The cover entity of the gate to query."
+        },
+        "phone": {
+          "name": "Phone number",
+          "description": "Full intl. phone number of the user (e.g. 972501234567)."
+        }
+      }
+    },
+    "add_user": {
+      "name": "Add gate user",
+      "description": "Add a new authorized user to a gate. Pass additional user record fields via 'settings' as a dict — see Palgate API docs for available fields.",
+      "fields": {
+        "entity_id": {
+          "name": "Gate entity",
+          "description": "The cover entity of the gate to add the user to."
+        },
+        "phone": {
+          "name": "Phone number",
+          "description": "Full intl. phone number of the user to add (e.g. 972501234567)."
+        },
+        "settings": {
+          "name": "Settings",
+          "description": "Optional dict of user record fields to set (e.g. firstname, output1, dialToOpen). Passed directly to the Palgate API."
+        }
+      }
+    },
+    "remove_user": {
+      "name": "Remove gate user",
+      "description": "Remove an authorized user from a gate.",
+      "fields": {
+        "entity_id": {
+          "name": "Gate entity",
+          "description": "The cover entity of the gate to remove the user from."
+        },
+        "phone": {
+          "name": "Phone number",
+          "description": "Full intl. phone number of the user to remove (e.g. 972501234567)."
+        }
+      }
+    },
+    "set_user_settings": {
+      "name": "Set user settings",
+      "description": "Update an existing authorized user's settings. Pass only the fields to change via 'settings' — see Palgate API docs for available fields.",
+      "fields": {
+        "entity_id": {
+          "name": "Gate entity",
+          "description": "The cover entity of the gate."
+        },
+        "phone": {
+          "name": "Phone number",
+          "description": "Full intl. phone number of the user to update (e.g. 972501234567)."
+        },
+        "settings": {
+          "name": "Settings",
+          "description": "Dict of user record fields to update (e.g. output1, dialToOpen, hidden). Passed directly to the Palgate API."
+        }
+      }
+    },
+    "get_device_log": {
+      "name": "Get device log",
+      "description": "Retrieve the access history log for a gate. Returns a list of access events including who opened the gate, when, and how.",
+      "fields": {
+        "entity_id": {
+          "name": "Gate entity",
+          "description": "The cover entity of the gate to query."
+        }
+      }
+    }
   }
 }

@@ -1,0 +1,107 @@
+get_device_users:
+  name: Get gate users
+  description: Retrieve the full list of users authorized for a gate.
+  fields:
+    entity_id:
+      name: Gate entity
+      description: The cover entity of the gate to query.
+      required: true
+      selector:
+        entity:
+          domain: cover
+
+get_user_settings:
+  name: Get user settings
+  description: Retrieve settings for a single authorized user.
+  fields:
+    entity_id:
+      name: Gate entity
+      description: The cover entity of the gate to query.
+      required: true
+      selector:
+        entity:
+          domain: cover
+    phone:
+      name: Phone number
+      description: Full intl. phone number of the user (e.g. 972501234567).
+      required: true
+      selector:
+        text:
+
+add_user:
+  name: Add gate user
+  description: Add a new authorized user to a gate.
+  fields:
+    entity_id:
+      name: Gate entity
+      description: The cover entity of the gate.
+      required: true
+      selector:
+        entity:
+          domain: cover
+    phone:
+      name: Phone number
+      description: Full intl. phone number of the user to add (e.g. 972501234567).
+      required: true
+      selector:
+        text:
+    settings:
+      name: Settings
+      description: Optional dict of user record fields (e.g. firstname, output1). Passed directly to the Palgate API.
+      required: false
+      selector:
+        object:
+
+remove_user:
+  name: Remove gate user
+  description: Remove an authorized user from a gate.
+  fields:
+    entity_id:
+      name: Gate entity
+      description: The cover entity of the gate.
+      required: true
+      selector:
+        entity:
+          domain: cover
+    phone:
+      name: Phone number
+      description: Full intl. phone number of the user to remove (e.g. 972501234567).
+      required: true
+      selector:
+        text:
+
+set_user_settings:
+  name: Set user settings
+  description: Update settings for an existing authorized user.
+  fields:
+    entity_id:
+      name: Gate entity
+      description: The cover entity of the gate.
+      required: true
+      selector:
+        entity:
+          domain: cover
+    phone:
+      name: Phone number
+      description: Full intl. phone number of the user to update (e.g. 972501234567).
+      required: true
+      selector:
+        text:
+    settings:
+      name: Settings
+      description: Dict of user record fields to update. Passed directly to the Palgate API.
+      required: false
+      selector:
+        object:
+
+get_device_log:
+  name: Get gate log
+  description: Retrieve the access history log for a gate.
+  fields:
+    entity_id:
+      name: Gate entity
+      description: The cover entity of the gate.
+      required: true
+      selector:
+        entity:
+          domain: cover

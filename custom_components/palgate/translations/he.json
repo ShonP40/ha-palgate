@@ -1,0 +1,174 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "device_id": "Device ID",
+          "phone_number": "מספר טלפון מקושר"
+        },
+        "data_description": {
+          "device_id": "שם ההתקן (Device ID), ניתן למצוא ביישומון בהגדרות השער",
+          "phone_number": "מספר הטלפון המורשה שממנו בוצע הקישור"
+        },
+        "sections": {
+          "advanced_options": {
+            "name": "הגדרות מתקדמות",
+            "description": "אם אינכם בטוחים, השאירו בהגדרות המחדל",
+            "data": {
+              "seconds_to_open": "זמן בשניות שלוקח לשער להיפתח",
+              "seconds_open": "זמן בשניות שהשער נשאר פתוח לפני שנסגר שוב",
+              "seconds_to_close": "זמן בשניות שלוקח לשער להיסגר",
+              "allow_invert_as_stop": "לאפשר הפעלה בזמן שהשער נע, כדי להפוך כיוון"
+            },
+            "data_description": {
+              "allow_invert_as_stop": "אם סומן, לחיצה על STOP תפעיל את השער שוב בזמן פתיחה - בדרך כלל, להפיכת כיוון"
+            }
+          }
+        }
+      },
+      "select_device": {
+        "title": "בחר שער",
+        "description": "בחר שער מהרשימת השערים המקושרים ל-{phone}",
+        "data": {
+          "device_id": "שער"
+        }
+      },
+      "reconfigure": {
+        "data": {
+          "device_id": "Device ID"
+        },
+        "data_description": {
+          "device_id": "שם ההתקן (Device ID), ניתן למצוא ביישומון בהגדרות השער"
+        },
+        "sections": {
+          "advanced_options": {
+            "name": "הגדרות מתקדמות",
+            "description": "אם אינכם בטוחים, השאירו בהגדרות המחדל",
+            "data": {
+              "seconds_to_open": "זמן בשניות שלוקח לשער להיפתח",
+              "seconds_open": "זמן בשניות שהשער נשאר פתוח לפני שנסגר שוב",
+              "seconds_to_close": "זמן בשניות שלוקח לשער להיסגר",
+              "allow_invert_as_stop": "לאפשר הפעלה בזמן שהשער נע, כדי להפוך כיוון"
+            },
+            "data_description": {
+              "allow_invert_as_stop": "אם סומן, לחיצה על STOP תפעיל את השער שוב בזמן פתיחה - בדרך כלל, להפיכת כיוון"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "cant_reconfigure_device_id": "לא ניתן לערוך את Device ID. העדכון נדחה"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "cannot_fetch_devices": "קבלת רשימת השערים מהשרת נכשלה, נסו שנית.",
+      "no_devices_found": "אין עוד שערים שמוגדרים לטלפון {phone}.",
+      "reconfigure_successful": "השער הוגדר בהצלחה"
+    },
+    "progress": {
+      "wait_for_qr": "פתחו את הישומון בטלפון, בחרו LINK A DEVICE בדף LINKED DEVICES וסרקו את הקוד הזה. \n\nממתין...\n\n\n {qr_code}"
+    }
+  },
+  "entity": {
+    "select": {
+      "relay_mode": {
+        "name": "מצב תפעול",
+        "state": {
+          "normal": "רגיל",
+          "hold_open": "השאר פתוח",
+          "hold_closed": "השאר סגור"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_device_users": {
+      "name": "רשימת כל המשתמשים",
+      "description": "שליפת כל המשתמשים הרשומים של השער, כולל מספרם והגדרותיהם.",
+      "fields": {
+        "entity_id": {
+          "name": "השער",
+          "description": "ישות השער מולו תתבצע השאילתא."
+        }
+      }
+    },
+    "get_user_settings": {
+      "name": "הגדרות משתמש",
+      "description": "שליפת כל ההגדרות של משתמש אחד.",
+      "fields": {
+        "entity_id": {
+          "name": "השער",
+          "description": "ישות השער מולו תתבצע השאילתא."
+        },
+        "phone": {
+          "name": "מספר הטלפון",
+          "description": "מספר טלפון של המשתמש (לדוגמה: 972501234567)."
+        }
+      }
+    },
+    "add_user": {
+      "name": "הוסף משתמש מורשה לשער",
+      "description": "הוסף משתמש מורשה לשער. הגדרות והרשאות מועברות דרך שדות בבקשה. למידע נוסף עיינו בתיעוד.",
+      "fields": {
+        "entity_id": {
+          "name": "השער",
+          "description": "ישות השער מולו תתבצע השאילתא."
+        },
+        "phone": {
+          "name": "מספר הטלפון",
+          "description": "מספר טלפון של המשתמש (לדוגמה: 972501234567)."
+        },
+        "settings": {
+          "name": "הגדרות משתמש",
+          "description": "אופציונלי - מילון של שדות הגדרות משתמש. למידע נוסף עיינו בתיעוד."
+        }
+      }
+    },
+    "remove_user": {
+      "name": "הסר משתמש מורשה",
+      "description": "הסר משתמש מורשה מהשער.",
+      "fields": {
+        "entity_id": {
+          "name": "השער",
+          "description": "ישות השער מולו תתבצע השאילתא."
+        },
+        "phone": {
+          "name": "מספר הטלפון",
+          "description": "מספר טלפון של המשתמש (לדוגמה: 972501234567)."
+        }
+      }
+    },
+    "set_user_settings": {
+      "name": "עדכן הגדרות משתמש",
+      "description": "עדכון הגדרות של משתמש מורשה קיים. העבירו רק שדות שצריך לשנות. למידע נוסף עיינו בתיעוד.",
+      "fields": {
+        "entity_id": {
+          "name": "השער",
+          "description": "ישות השער מולו תתבצע השאילתא."
+        },
+        "phone": {
+          "name": "מספר הטלפון",
+          "description": "מספר טלפון של המשתמש (לדוגמה: 972501234567)."
+        },
+        "settings": {
+          "name": "הגדרות משתמש",
+          "description": "מילון של שדות הגדרות משתמש. למידע נוסף עיינו בתיעוד."
+        }
+      }
+    },
+    "get_device_log": {
+      "name": "יומן אירועים",
+      "description": "קבלת יומן אירועי גישה לשער. מחזיר רשימת אירועי גישה, כולל מי פתח את השער, מתי ובאיזה אמצעי.",
+      "fields": {
+        "entity_id": {
+          "name": "השער",
+          "description": "ישות השער מולו תתבצע השאילתא."
+        }
+      }
+    }
+  }
+}
