@@ -46,8 +46,6 @@ This entity (new for v1.6 of this integration) is initially created as _disabled
 2. Make sure the user (phone) that this gate is linked through, has the special permission for this action (on Palgate app, admin user: Gate settings -> Manager Options -> Users -> Selected user -> "Latch Output 1").\
 ➡️If the linked phone's user does not have the right permission, the selector entity will be marked `unavailable`. Once permission is granted, it will become operational.
 
-At this time, this feature supports one output of the Palgate device - output1. This seems to cover most installations.
-
 To use this in an automation, you can use the `select.select_option` action with the selector entity of the gate (e.g. `select.4G123456789_relay_mode`), available options: `normal`, `hold_open` and `hold_closed`.
 ### Actions (Services)
 Starting with release 1.7.0, the integration exposes several actions, that can be used from scripts, automations or Developer Tools, to query / manage gate users, permissions and access log. For more information check out [ACTIONS](ACTIONS.md).
