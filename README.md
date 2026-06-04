@@ -20,7 +20,12 @@ This is an unofficial integration, use at your own risk.
 
 ## Configuration
 
-This integration needs the Palgate app to be installed on your phone (Android or iOS). When adding your first gate, you will be guided through the process of linking your Palgate app to Home Assistant. Note that the Palgate app typically allows up to two Linked Devices. Once the linking is successful, you will be guided to complete the gate selection and configuration.
+This integration needs the Palgate app to be installed on your phone (Android or iOS). When adding your first gate, via `Add Integration`, you will be guided through the process of linking your Palgate app to Home Assistant. 
+> [!NOTE]
+> 1. When when being guided to link the Palgate app to this integration (QR code scanning), you need to select the device linking function on the app (_Linked Devices_ in Android, _Device Linking_ in iOS).
+> 2. The Palgate app typically allows up to two Linked Devices.
+
+Once linking is successful, you will be guided to complete the gate selection and configuration.
 
 If your Palgate account is authorized to control more than one gate, you can select and configure any/all of them, one by one. You can also link other phones (accounts) to this integration, and configure the gates those phones are authorized for, the same way.
 
