@@ -11,7 +11,7 @@ This is an unofficial integration, use at your own risk.
 ## Installation
 
 1. Ensure that [HACS](https://hacs.xyz/) is installed
-2. Add this repository as a custom repository
+2. ~~Add this repository as a custom repository~~ (Not needed as of July 2026 - integration is now included in HACS default set of integrations)
 3. Search for and install the "Palgate" integration
 4. Restart Home Assistant
 5. Configure the `Palgate` integration
