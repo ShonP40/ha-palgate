@@ -58,13 +58,13 @@
             }
     },
     "error": {
-      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
-      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
-      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error",
       "cant_reconfigure_device_id": "Device ID cannot be reconfigured. Update rejected"
     },
     "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "already_configured_device": "Device is already configured",
       "cannot_fetch_devices": "Could not retrieve gate list from server. Please try again.",
       "no_devices_found": "No more configurable gates for phone {phone}.",
       "reconfigure_successful": "Gate entry reconfigured succefully"

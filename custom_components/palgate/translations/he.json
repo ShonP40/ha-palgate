@@ -58,13 +58,13 @@
       }
     },
     "error": {
-      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
-      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
-      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "cannot_connect": "ההתחברות נכשלה",
+      "invalid_auth": "אימות לא תקין",
+      "unknown": "תקלה לא צפויה",
       "cant_reconfigure_device_id": "לא ניתן לערוך את Device ID. העדכון נדחה"
     },
     "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "already_configured_device": "היחידה הוגדרה כבר",
       "cannot_fetch_devices": "קבלת רשימת השערים מהשרת נכשלה, נסו שנית.",
       "no_devices_found": "אין עוד שערים שמוגדרים לטלפון {phone}.",
       "reconfigure_successful": "השער הוגדר בהצלחה"
