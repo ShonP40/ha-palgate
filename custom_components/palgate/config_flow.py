@@ -7,9 +7,7 @@ import logging
 import asyncio
 import uuid
 import pyqrcode
-import io
 import json
-import aiohttp
 from http import HTTPStatus
 
 import voluptuous as vol
@@ -27,8 +25,8 @@ from .const import *
 
 _LOGGER = logging.getLogger(__name__)
 
-DEVICES_URL = "https://api1.pal-es.com/v1/bt/devices"
-INIT_URL = "https://api1.pal-es.com/v1/bt/un/secondary/init/"
+DEVICES_URL = f"{BASE_URL}/devices"
+INIT_URL = f"{BASE_URL}/un/secondary/init/"
 
 class PalgateFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
     """Config flow for Palgate."""
@@ -167,7 +165,11 @@ class PalgateFlowHandler(config_entries.ConfigFlow, domain=PALGATE_DOMAIN):
         _session = async_get_clientsession(self.hass)
 
         _headers = {
-            "x-bt-token": generate_token(bytes.fromhex(self._linked_token),int(self._linked_phone_number),int(self._linked_token_type))
+            "x-bt-token": generate_token(
+            bytes.fromhex(self._linked_token),
+            int(self._linked_phone_number),
+            int(self._linked_token_type),
+            )
         }
 
         async with _session.get(url=DEVICES_URL, headers=_headers) as resp:

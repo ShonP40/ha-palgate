@@ -1,13 +1,11 @@
 """Palgate library."""
 
 from http import HTTPStatus
-import json
 from typing import Any, Optional
 
 from datetime import datetime, timedelta
 
 import aiohttp
-from voluptuous.error import Error
 import logging
 from homeassistant.exceptions import HomeAssistantError
 
